@@ -1,5 +1,274 @@
 #!/bin/bash
 
+###############################################
+#
+#유저 목록을 관리하는 함수를 구현한 스크립트 입니다.
+#
+###############################################
+
+###############################################
+#자세한 정보 조회
+###############################################
+
+#코멘트 조회 (사용 인자: $1=사용자 이름 ,반환: 코멘트) - 완성
+function comment_check {
+    echo `grep /bin/bash /etc/passwd | grep -w $1  | cut -d ":"  -f 5`
+}
+
+#비밀번호 권장 비밀번호 변경일까지 남은 일 수 (사용 인자: $1=사용자 이름 ,반환: 남은 일 수) - 완성
+function passwd_day_check {
+    echo `grep -w $1 /etc/shadow | cut -d ":"  -f 5`
+}
+
+#사용 쉘 조회 (사용 인자: $1=사용자 이름 ,반환: 쉘 이름) - 완성
+function user_shell_check {
+    echo `grep /bin/bash /etc/passwd | grep -w $1  | cut -d ":"  -f 7`
+}
+
+
+###############################################
+#사용자 추가, 제거
+###############################################
+
+#사용자 추가 (사용 인자: $1=사용자 이름) - 완성
+function user_add {
+    useradd -N -d /home/"$1" -s /bin/bash "$1"
+    #기본 그룹 설정
+    usermod -G 100 $1
+}
+
+#사용자 제거 (사용 인자: $1=사용자 이름) - 완성
+function user_del {
+    userdel -r $1
+}
+
+
+###############################################
+#사용자 정보 변경
+###############################################
+
+#사용자 코멘트 변경 (사용 인자: $1=사용자 이름 $2=입력할 코멘트) - 완성
+function user_comment_edit {
+    usermod -c $2 $1
+}
+
+#사용자 비밀번호 변경 (사용 인자: $1=사용자 이름) - 완성
+function user_passwd_edit {
+    passwd $1
+}
+
+
+###############################################
+#그룹 추가, 제거
+###############################################
+
+#그룹 추가 (사용 인자: $1=그룹 이름) - 완성
+function group_add {
+    groupadd $1
+}
+
+#그룹 제거 (사용 인자: $1=그룹 이름) - 완성
+function group_del {
+    groupdel $1
+}
+
+###############################################
+#그룹 관리
+#
+#이슈: 사용자의 그룹은 주 그룹과 나머지 그룹으로 구성됨
+#그룹을 추가시 주 그룹의 변경 여부
+#
+###############################################
+
+#그룹 멤버 추가 (사용 인자: $1=그룹 이름 $2...=추가할 사용자 목록) - 완성
+function group_member_add {
+    for param in "$@"
+    do
+        if [ $param = $1 ]
+        then
+            continue
+        fi
+        usermod -G $1 -a $param
+    done
+}
+
+#그룹 멤버 제거 (사용 인자: $1=그룹 이름 $2...=제거할 사용자 목록) - 완성
+function group_member_del {
+    for param in "$@"
+    do
+        if [ $param = $1 ]
+        then
+            continue
+        fi
+        gpasswd -d $param $1
+    done
+}
+
+#############################################################
+#
+#   화면 출력에 필요한 텍스트 파일을 만드는 스크립트입니다.
+#
+# 제작하는 텍스트 파일 목록
+#user_DB.txt: 유저 목록을 저장한 파일
+#main_menu.txt: 메인 메뉴 텍스트를 저장한 파일
+#user_menu.txt: 유저 관리 메뉴 텍스트를 저장한 파일
+#group_menu.txt: 그룹 관리 메뉴 텍스트를 저장한 파일
+# 
+#############################################################
+
+function creat_user_var {
+    # 유저 목록 변수
+    user=`grep /bin/bash /etc/passwd | cut -d ":"  -f 1`
+    # 변수출력 테스트
+    #echo -n "user: "
+    #echo $user
+
+    # UID 목록 변수
+    _UID=`grep /bin/bash /etc/passwd | cut -d ":"  -f 3`
+    # 변수출력 테스트
+    #echo -n "UID: "
+    #echo $_UID
+
+    #GID 목록을 변수
+    _GID=`grep /bin/bash /etc/passwd | cut -d ":"  -f 4`
+    # 변수출력 테스트
+    #echo -n "GID: "
+    #echo $_GID
+
+    # 그룹 목록 변수
+    touch group.txt
+    for(( i=1 ; i <= `echo "$_GID" | wc -l | cut -d ' ' -f1` ; i++)); do
+    GID_tem=`echo "$_GID" | head -n $i | tail -1`
+    echo `getent group $GID_tem | cut -d: -f1` >> group.txt
+    done
+    group=`cat group.txt`
+    rm group.txt
+    # 변수출력 테스트
+    #echo -n "group: "
+    #echo $group
+}
+
+#(User:UID:group:GID)을 한 단위로 DB를 만드는 함수
+function create_user_DB {
+    [ -s ~/user_DB.txt ] || touch user_DB.txt
+    #텍스트 파일 초기화(항목을 하나하나 추가하는 형식으로 작성하기 때문에 초기화 작업이 필요)
+    cat /dev/null > user_DB.txt
+
+    for(( i=1 ; i <= `echo "$user" | wc -l | cut -d ' ' -f1` ; i++)); do
+        local unit=""
+        unit+=`echo "$user" | head -n $i | tail -1`
+        unit+=':'
+        unit+=`echo "$_UID" | head -n $i | tail -1`
+        unit+=':'
+        unit+=`echo "$group" | head -n $i | tail -1`
+        unit+=':'
+        unit+=`echo "$_GID" | head -n $i | tail -1`
+        echo $unit | cat >> user_DB.txt
+    done
+}
+
+#user_DB.txt를 기반으로 메인 메뉴 텍스트 파일 생성
+function create_main_menu {
+    [ -s ~/main_menu.txt ] || touch main_menu.txt
+
+    #텍스트 파일 초기화(항목을 하나하나 추가하는 형식으로 작성하기 때문에 초기화 작업이 필요)
+    cat /dev/null > main_menu.txt
+
+    echo "┌──User───────────┬──UID───┬──Group──────────┬──GID───┐" >> main_menu.txt
+
+    for(( n=1 ; n <= `wc -l user_DB.txt | cut -d ' ' -f1` ; n++ )); do
+        local loc_user
+        local loc_uid
+        local loc_group
+        local loc_gid
+
+        echo -n "│ " >> main_menu.txt
+        loc_user=`head -n $n user_DB.txt | tail -1 | cut -d ":"  -f 1 `
+        #탭의 길이 안에서만 출력, 넘어가는 부분은 출력하지 않음
+        echo -n ${loc_user:0:16} >> main_menu.txt
+        #탭의 길이에서 문자열이 차지하는 길이를 뺀 나머지 부분을 공백으로 채움
+        for (( i=0 ; i < `expr 16 - ${#loc_user}` ; i++ )); do
+            echo -n " " >> main_menu.txt
+        done
+
+        echo -n "│ " >> main_menu.txt
+        loc_uid=`head -n $n user_DB.txt | tail -1 | cut -d ":"  -f 2 `
+        echo -n ${loc_uid:0:7} >> main_menu.txt
+        for (( i=0 ; i < `expr 7 - ${#loc_uid}` ; i++ )); do
+            echo -n " " >> main_menu.txt
+        done
+
+        echo -n "│ " >> main_menu.txt
+        loc_group=`head -n $n user_DB.txt | tail -1 | cut -d ":"  -f 3 `
+        echo -n ${loc_group:0:16} >> main_menu.txt
+        for (( i=0 ; i < `expr 16 - ${#loc_group}` ; i++ )); do
+            echo -n " " >> main_menu.txt
+        done
+
+        echo -n "│ " >> main_menu.txt
+        loc_gid=`head -n $n user_DB.txt | tail -1 | cut -d ":"  -f 4 `
+        echo -n ${loc_gid:0:7} >> main_menu.txt
+        for (( i=0 ; i < `expr 7 - ${#loc_gid}` ; i++ )); do
+            echo -n " " >> main_menu.txt
+        done
+
+        echo "│" >> main_menu.txt
+    done
+    echo "├─────────────────┴────────┼─────────────────┴────────┤" >> main_menu.txt
+    echo "│ Add User                 │ Add Gruop                │" >> main_menu.txt
+    echo "└──────────────────────────┴──────────────────────────┘" >> main_menu.txt
+}
+
+#유저 관리 메뉴 텍스트 파일을 생성 ( 1$: 조회할 사용자 )
+function create_user_menu {
+    [ -s ~/user_menu.txt ] || touch user_menu.txt
+
+    #텍스트 파일 초기화(항목을 하나하나 추가하는 형식으로 작성하기 때문에 초기화 작업이 필요)
+    cat /dev/null > user_menu.txt
+
+    echo "┌──UserInfo───────────────────────────────────────────┐" >> user_menu.txt
+    echo "│ User:                                               │" >> user_menu.txt
+    echo "│ Comment:                                            │" >> user_menu.txt
+    echo "│ Shell:                                              │" >> user_menu.txt
+    echo "│ Passwd day:                                         │" >> user_menu.txt
+    echo "└─────────────────────────────────────────────────────┘" >> user_menu.txt
+    echo "┌──UserOption─────────────────────────────────────────┐" >> user_menu.txt
+    echo "│ Edit comment               Edit passwd              │" >> user_menu.txt
+    echo "│ Remove user                Return manu              │" >> user_menu.txt
+    echo "└─────────────────────────────────────────────────────┘" >> user_menu.txt
+    echo "  Input:" >> user_menu.txt
+}
+
+#그룹 관리 메뉴 텍스트 파일을 생성 ( 1$: 조회할 그룹 )
+function create_group_menu {
+    [ -s ~/group_menu.txt ] || touch group_menu.txt
+
+    #텍스트 파일 초기화(항목을 하나하나 추가하는 형식으로 작성하기 때문에 초기화 작업이 필요)
+    cat /dev/null > group_menu.txt
+
+    echo "┌──MemberList─────────────────────────────────────────┐" >> group_menu.txt
+    echo "│                                                     │" >> group_menu.txt
+    echo "│                                                     │" >> group_menu.txt
+    echo "│                                                     │" >> group_menu.txt
+    echo "│                                                     │" >> group_menu.txt
+    echo "└─────────────────────────────────────────────────────┘" >> group_menu.txt
+    echo "┌──GroupOption────────────────────────────────────────┐" >> group_menu.txt
+    echo "│ Add member                 Remove member            │" >> group_menu.txt
+    echo "│ Remove group               Return manu              │" >> group_menu.txt
+    echo "└─────────────────────────────────────────────────────┘" >> group_menu.txt
+    echo "  Input:" >> group_menu.txt
+}
+
+#입력창 텍스트 파일을 생성
+function creat_input_menu {
+    [ -s ~/Input.txt ] || touch Input.txt
+
+    #텍스트 파일 초기화(항목을 하나하나 추가하는 형식으로 작성하기 때문에 초기화 작업이 필요)
+    cat /dev/null > Input.txt
+
+    echo "  Input:                                                             " >> Input.txt
+}
+
 ##################################################
 #
 #   커서 이동 메커니즘
@@ -16,9 +285,6 @@
 #   기본 설정 스크립트
 #
 ##################################################
-
-#실행전 텍스트 파일 생성 스크립트 실행
-. user_check.sh
 
 #실행전 화면정리
 clear
@@ -89,11 +355,22 @@ function move_cursor {
 #
 ###################################################################################
 
-#유저 관리 메뉴 함수( $1: 시작 행 )
+#유저 관리 메뉴 함수( $1: 시작 행 $2: 관리할 사용자)
 function user_menu_control {
+    #메뉴 종료 변수(1되면 종료함)
+    local u_end=0
     #메뉴 텍스트 출력
     tput cup $1 0
     cat user_menu.txt
+    #UserInfo 채우기
+    tput cup ` expr $1 + 1 ` 8
+    echo $2
+    tput cup ` expr $1 + 2 ` 11
+    comment_check $2
+    tput cup ` expr $1 + 3 ` 9
+    user_shell_check $2
+    tput cup ` expr $1 + 4 ` 14
+    passwd_day_check $2
     #커서 범위(행은 범위 내에서 움직이고 열은 두 위치만 가능함)
     local Info_col_len=4
     local col_range_start=`expr $1 + $Info_col_len + 3 `
@@ -164,17 +441,37 @@ function user_menu_control {
         move_cursor $pre_col $pre_row $col $row
     }
 
+    #($1 2: 상위 스크립트 1 2번 인자)
     function user_move_enter {
+        #Input 공간 정리
+        tput cup $(($1+10)) 0
+        cat Input.txt
+        tput cup $(($1+10)) 9
+        tput cnorm
         #이전 커서 위치 정보 저장
         pre_row=$row
         pre_col=$col
-        echo `expr $col_option + 2`
         #왼쪽 탭에 커서가 있는 경우
         if [ $row -eq $row_pos1 ]; then
-            echo enter
+            #1행에 커서가 있는 경우(Edit comment)
+            if [ $col -eq $col_range_start ]; then
+                read comment
+                user_comment_edit $2 $comment
+            #2행에 커서가 있는 경우(Remove user)
+            elif [ $col -eq $col_range_end ]; then
+                user_del $2
+                #유저 삭제시 메인 메뉴 목록 초기화
+                main_menu_control
+            fi
         #오른쪽 탭에 커서가 있는 경우
         elif [ $row -eq $row_pos2 ]; then
-            echo enter
+            #1행에 커서가 있는 경우(Edit passwd)
+            if [ $col -eq $col_range_start ]; then
+                user_passwd_edit $2
+            #2행에 커서가 있는 경우(Return manu)
+            elif [ $col -eq $col_range_end ]; then
+                u_end=1
+            fi
         fi
     }
 
@@ -185,10 +482,10 @@ function user_menu_control {
     #
     ######################################
 
-    while true; do
+    while (($u_end == 0)); do
         INPUT=$(input_key)
         if [[ $INPUT = "" ]]; then
-            user_move_enter
+            user_move_enter $1 $2
         elif [[ $INPUT = $ESC[A ]]; then
             user_move_up
         elif [[ $INPUT = $ESC[B ]]; then
@@ -204,11 +501,32 @@ function user_menu_control {
     done
 }
 
-#그룹 관리 메뉴 함수( $1: 시작 행 )
+#그룹 관리 메뉴 함수( $1: 시작 행 $2: 관리할 그룹GID )
 function group_menu_control {
+    #메뉴 종료 변수(1되면 종료함)
+    local g_end=0
     #메뉴 텍스트 출력
     tput cup $1 0
     cat group_menu.txt
+    #MemberList 채우기
+    local member_list=`grep -w $2 /etc/group | cut -d ":"  -f 4`
+    member_list+=","
+    tput cup ` expr $1 + 1 ` 2
+    echo `echo $member_list | cut -d "," -f 1`
+    tput cup ` expr $1 + 1 ` 29
+    echo `echo $member_list | cut -d "," -f 2`
+    tput cup ` expr $1 + 2 ` 2
+    echo `echo $member_list | cut -d "," -f 3`
+    tput cup ` expr $1 + 2 ` 29
+    echo `echo $member_list | cut -d "," -f 4`
+    tput cup ` expr $1 + 3 ` 2
+    echo `echo $member_list | cut -d "," -f 5`
+    tput cup ` expr $1 + 3 ` 29
+    echo `echo $member_list | cut -d "," -f 6`
+    tput cup ` expr $1 + 4 ` 2
+    echo `echo $member_list | cut -d "," -f 7`
+    tput cup ` expr $1 + 4 ` 29
+    echo `echo $member_list | cut -d "," -f 8`
     #커서 범위(행은 범위 내에서 움직이고 열은 두 위치만 가능함)
     local Info_col_len=4
     local col_range_start=`expr $1 + $Info_col_len + 3 `
@@ -279,17 +597,40 @@ function group_menu_control {
         move_cursor $pre_col $pre_row $col $row
     }
 
+    #($1 2: 상위 스크립트 1 2번 인자)
     function group_move_enter {
+        #Input 공간 정리
+        tput cup $(($1+10)) 0
+        cat Input.txt
+        tput cup $(($1+10)) 9
+        tput cnorm
+        #$2가 gid라 이를 그룹명으로 저장
+        local group=`getent group $2 | cut -d: -f1`
         #이전 커서 위치 정보 저장
         pre_row=$row
         pre_col=$col
-        echo `expr $col_option + 2`
         #왼쪽 탭에 커서가 있는 경우
         if [ $row -eq $row_pos1 ]; then
-            echo enter
+            #1행에 커서가 있는 경우(Add member)
+            if [ $col -eq $col_range_start ]; then
+                local member_arr
+                read member_arr
+                group_member_add $group `echo $member_arr`
+            #2행에 커서가 있는 경우(Remove group)
+            elif [ $col -eq $col_range_end ]; then
+                group_del $group
+            fi
         #오른쪽 탭에 커서가 있는 경우
         elif [ $row -eq $row_pos2 ]; then
-            echo enter
+            #1행에 커서가 있는 경우(Remove member)
+            if [ $col -eq $col_range_start ]; then
+                local member_arr
+                read member_arr
+                group_member_del $group `echo $member_arr`
+            #2행에 커서가 있는 경우(Return manu)
+            elif [ $col -eq $col_range_end ]; then
+                g_end=1
+            fi
         fi
     }
 
@@ -300,10 +641,10 @@ function group_menu_control {
     #
     ######################################
 
-    while true; do
+    while (($g_end == 0)); do
         INPUT=$(input_key)
         if [[ $INPUT = "" ]]; then
-            group_move_enter
+            group_move_enter $1 $2
         elif [[ $INPUT = $ESC[A ]]; then
             group_move_up
         elif [[ $INPUT = $ESC[B ]]; then
@@ -335,6 +676,13 @@ function group_menu_control {
 ###################################################################################
 
 function main_menu_control {
+    creat_user_var
+    create_user_DB
+    create_main_menu
+    create_user_menu 
+    create_group_menu
+    creat_input_menu
+    
     #메인 메뉴로 돌아올 때는 화면초기화
     clear
     cat main_menu.txt
@@ -421,20 +769,31 @@ function main_menu_control {
         pre_col=$col
         #커서가 옵션 행에 있는 경우
         if [ $col -eq $col_option ]; then
+            #Input 공간 정리
+            tput cup `expr $col_option + 2` 0
+            cat Input.txt
+            tput cup `expr $col_option + 2` 9
+            tput cnorm
             if [ $row -eq $row_pos1 ]; then
-            #유저 추가 부분(구현 예정)
-            echo Adduser
+                #유저 추가 부분
+                local u_name
+                read u_name
+                user_add $u_name
             elif [ $row -eq $row_pos2 ]; then
-            #그룹 추가 부분(구현 예정)
-            echo Addgroup
+                #그룹 추가 부분
+                local g_name
+                read g_name
+                group_add $g_name
             fi
+            #추가사항 반영하여 갱신
+            main_menu_control
         else
             #유저 탭에 커서가 있는 경우
             if [ $row -eq $row_pos1 ]; then
-                user_menu_control `expr $col_option + 2`
+                user_menu_control `expr $col_option + 3` `head -n $col user_DB.txt | tail -1 | cut -d ":"  -f 1 `
             #그룹 탭에 커서가 있는 경우
             elif [ $row -eq $row_pos2 ]; then
-                group_menu_control `expr $col_option + 2`
+                group_menu_control `expr $col_option + 3` `head -n $col user_DB.txt | tail -1 | cut -d ":"  -f 4 `
             fi
         fi
     }
@@ -467,11 +826,9 @@ function main_menu_control {
 
 ###################################################################################
 #
-#   구현에 문제가 되는 부분 정리
+#   구현에 문제가 되는 부분 또는 버그 정리
 #
-#
-#
-#
+#그룹 삭제 기능이 사용자의 대표 그룹은 삭제 불가능 때문에 사실상 제대로 작동안함
 #
 ###################################################################################
 

@@ -1,10 +1,10 @@
 #!/bin/bash
+
 ###############################################
 #
 #유저 목록을 관리하는 함수를 구현한 스크립트 입니다.
 #
 ###############################################
-
 
 ###############################################
 #자세한 정보 조회
@@ -12,17 +12,17 @@
 
 #코멘트 조회 (사용 인자: $1=사용자 이름 ,반환: 코멘트) - 완성
 function comment_check {
-    echo `grep /bin/bash /etc/passwd | grep $1  | cut -d ":"  -f 5`
+    echo `grep /bin/bash /etc/passwd | grep -w $1  | cut -d ":"  -f 5`
 }
 
 #비밀번호 권장 비밀번호 변경일까지 남은 일 수 (사용 인자: $1=사용자 이름 ,반환: 남은 일 수) - 완성
 function passwd_day_check {
-    echo `grep $1 /etc/shadow | cut -d ":"  -f 5`
+    echo `grep -w $1 /etc/shadow | cut -d ":"  -f 5`
 }
 
 #사용 쉘 조회 (사용 인자: $1=사용자 이름 ,반환: 쉘 이름) - 완성
 function user_shell_check {
-    echo `grep /bin/bash /etc/passwd | grep $1  | cut -d ":"  -f 7`
+    echo `grep /bin/bash /etc/passwd | grep -w $1  | cut -d ":"  -f 7`
 }
 
 
@@ -32,7 +32,9 @@ function user_shell_check {
 
 #사용자 추가 (사용 인자: $1=사용자 이름) - 완성
 function user_add {
-    useradd -d /home/"$1" -s /bin/bash "$1"
+    useradd -N -d /home/"$1" -s /bin/bash "$1"
+    #기본 그룹 설정
+    usermod -G 100 $1
 }
 
 #사용자 제거 (사용 인자: $1=사용자 이름) - 완성
@@ -52,7 +54,7 @@ function user_comment_edit {
 
 #사용자 비밀번호 변경 (사용 인자: $1=사용자 이름) - 완성
 function user_passwd_edit {
-    passwd -f $1
+    passwd $1
 }
 
 

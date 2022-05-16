@@ -154,6 +154,16 @@ function create_group_menu {
     echo "  Input:" >> group_menu.txt
 }
 
+#입력창 텍스트 파일을 생성
+function creat_input_menu {
+    [ -s ~/Input.txt ] || touch Input.txt
+
+    #텍스트 파일 초기화(항목을 하나하나 추가하는 형식으로 작성하기 때문에 초기화 작업이 필요)
+    cat /dev/null > Input.txt
+
+    echo "  Input:                                                             " >> Input.txt
+}
+
 create_user_DB
 
 create_main_menu
@@ -167,3 +177,5 @@ create_user_menu
 create_group_menu
 #출력 테스트
 #cat group_menu.txt
+
+creat_input_menu
