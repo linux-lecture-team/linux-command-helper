@@ -1,30 +1,43 @@
 #！/bin/bash
-fileName=$1
-now=`date +%Y%y%d`
-dir=$(/data/$now)
-read  -p "Are you sure you want to delete this file or directory $1 ? yes|no :" input
-if [ $input == "yes" ] || [ $input == "y" ]; then
 
-     # Define DIR and mkdir DIR
+# fileName=$1
+# now=`date +%Y%y%d`
+# dir=$(/data/$now)
+# read  -p "Are you sure you want to delete this file or directory $1 ? yes|no :" input
+# if [ $input == "yes" ] || [ $input == "y" ]; then
 
-     if [ ! -d $dir ]; then
-        mkdir /data/$now
-    fi
+#      # Define DIR and mkdir DIR
 
-    # Rsync Synchronizes files and directories to be deleted
+#      if [ ! -d $dir ]; then
+#         mkdir /data/$now
+#     fi
 
-     rsync -aR $1/ /data/$now/$1/
-     rm -rf $1
+#     # Rsync Synchronizes files and directories to be deleted
 
-elif [ $input == "no" ] || [ $input == "n" ]; then
+#      rsync -aR $1/ /data/$now/$1/
+#      rm -rf $1
 
-     # Exit with No
+# elif [ $input == "no" ] || [ $input == "n" ]; then
 
-     exit 0
-else
+#      # Exit with No
 
-     # Prompt if you select another input character
+#      exit 0
+# else
 
-     echo "Can only enter yes or no"
-     exit 0
-fi
+#      # Prompt if you select another input character
+
+#      echo "Can only enter yes or no"
+#      exit 0
+# fi
+
+
+function safe_rm {
+     remove_file_name=$1
+
+     if [ "${remove_file_name}" == "" ]; then
+          echo "please input "
+     fi
+
+}
+
+safe_rm $1
