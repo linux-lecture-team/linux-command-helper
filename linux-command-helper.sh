@@ -106,6 +106,52 @@ function set_terminal_text_color() {
 
 
 #######################################
+# 터미널의 텍스트 백그라운드 색상을 변경합니다.
+# Globals:
+#   None
+# Arguments:
+#   $1 텍스트 색상입니다. 
+# Outputs:
+#   None
+# References:
+#   지원 되는 색상은 다음 7가지 (black, red, green, yellow, blue, magenta, cyan, white) 입니다.
+#######################################
+function set_terminal_text_background_color() {
+     color_type=$1
+
+     case ${color_type} in
+     $"black")
+     tput setab 0
+     ;;
+     $"red")
+     tput setab 1
+     ;;
+     $"green")
+     tput setab 2
+     ;;
+     $"yellow")
+     tput setab 3
+     ;;
+     $"blue")
+     tput setab 4
+     ;;
+     $"magenta")
+     tput setab 5
+     ;;
+     $"cyan")
+     tput setab 6
+     ;;
+     $"white")
+     tput setab 7
+     ;;
+     *)
+     echo "not support color type"
+     ;;
+     esac
+}
+
+
+#######################################
 # 전체 스크립트를 실행합니다.
 # Globals:
 #   None
