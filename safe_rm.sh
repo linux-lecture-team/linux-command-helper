@@ -44,6 +44,40 @@ function set_terminal_text_color() {
      esac
 }
 
+function set_terminal_text_background_color() {
+     color_type=$1
+
+     case ${color_type} in
+     $"black")
+     tput setab 0
+     ;;
+     $"red")
+     tput setab 1
+     ;;
+     $"green")
+     tput setab 2
+     ;;
+     $"yellow")
+     tput setab 3
+     ;;
+     $"blue")
+     tput setab 4
+     ;;
+     $"magenta")
+     tput setab 5
+     ;;
+     $"cyan")
+     tput setab 6
+     ;;
+     $"white")
+     tput setab 7
+     ;;
+     *)
+     echo "not support color type"
+     ;;
+     esac
+}
+
 function check_remove_target() {
      
      question_for_user="삭제할 대상을 입력해주세요."
@@ -63,7 +97,8 @@ function safe_remove_folder() {
 function run_safe_rm() {
      clear_terminal
 
-     set_terminal_text_color "green"
+     set_terminal_text_background_color "magenta"
+     set_terminal_text_color "black"
 
      check_remove_target
      remove_target=$?
