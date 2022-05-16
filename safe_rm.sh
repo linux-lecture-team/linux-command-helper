@@ -4,6 +4,12 @@ function clear_terminal() {
      echo -en `clear`
 }
 
+function move_cursor() {
+     line=$1
+     col=$2
+     tput cup ${line} ${col}
+}
+
 function check_remove_target() {
      echo "nothing check_remove_target"
 }
