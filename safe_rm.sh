@@ -30,14 +30,34 @@
 #      exit 0
 # fi
 
-
-function safe_rm {
-     remove_file_name=$1
-
-     if [ "${remove_file_name}" == "" ]; then
-          echo "please input "
-     fi
-
+function check_remove_target() {
+     echo "nothing check_remove_target"
 }
 
-safe_rm $1
+function clear_terminal() {
+     echo -en `clear`
+}
+
+function safe_remove_file() {
+     echo "nothing safe_remove_file"
+}
+
+function safe_remove_folder() {
+     echo "nothing safe_remove_folder"
+}
+
+function run_safe_rm() {
+     clear_terminal
+
+     remove_target=$(check_remove_target)
+
+     if [ "${remove_target}" == "file" ]; then
+          safe_remove_file
+     elif [ "${remove_target}" == "folder" ]; then
+          safe_remove_folder
+     else
+          echo "not support remove target..."
+     fi
+}
+
+run_safe_rm
