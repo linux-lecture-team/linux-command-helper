@@ -60,6 +60,52 @@ function show_cursor() {
 
 
 #######################################
+# 터미널의 텍스트 색상을 변경합니다.
+# Globals:
+#   None
+# Arguments:
+#   $1 텍스트 색상입니다. 
+# Outputs:
+#   None
+# References:
+#   지원 되는 색상은 다음 7가지 (black, red, green, yellow, blue, magenta, cyan, white) 입니다.
+#######################################
+function set_terminal_text_color() {
+     color_type=$1
+
+     case ${color_type} in
+     $"black")
+     tput setaf 0
+     ;;
+     $"red")
+     tput setaf 1
+     ;;
+     $"green")
+     tput setaf 2
+     ;;
+     $"yellow")
+     tput setaf 3
+     ;;
+     $"blue")
+     tput setaf 4
+     ;;
+     $"magenta")
+     tput setaf 5
+     ;;
+     $"cyan")
+     tput setaf 6
+     ;;
+     $"white")
+     tput setaf 7
+     ;;
+     *)
+     echo "not support color type"
+     ;;
+     esac
+}
+
+
+#######################################
 # 전체 스크립트를 실행합니다.
 # Globals:
 #   None
