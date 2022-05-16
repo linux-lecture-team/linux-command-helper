@@ -32,6 +32,34 @@ function move_cursor() {
 
 
 #######################################
+# 터미널의 커서를 숨깁니다.
+# Globals:
+#   None
+# Arguments:
+#   None
+# Outputs:
+#   None
+#######################################
+function hide_cursor() {
+     tput civis
+}
+
+
+#######################################
+# 터미널의 커서를 보이도록 설정합니다.
+# Globals:
+#   None
+# Arguments:
+#   None
+# Outputs:
+#   None
+#######################################
+function show_cursor() {
+     tput cnorm
+}
+
+
+#######################################
 # 전체 스크립트를 실행합니다.
 # Globals:
 #   None
