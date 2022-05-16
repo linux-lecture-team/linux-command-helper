@@ -10,6 +10,14 @@ function move_cursor() {
      tput cup ${line} ${col}
 }
 
+function hide_cursor() {
+     tput civis
+}
+
+function show_cursor() {
+     tput cnorm
+}
+
 function set_terminal_text_color() {
      color_type=$1
 
