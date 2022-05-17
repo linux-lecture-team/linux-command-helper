@@ -162,10 +162,6 @@ function set_terminal_text_background_color() {
 #######################################
 function linux_command_helper() {
     clear_terminal
-
-    move_cursor 10 0
-    title=`cat resource/title.txt`
-    echo "${title}"
 }
 
 # 스크립트를 실행합니다.
