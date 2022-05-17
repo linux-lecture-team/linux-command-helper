@@ -99,7 +99,7 @@ function set_terminal_text_color() {
      tput setaf 7
      ;;
      *)
-     echo "not support color type"
+     echo "not support color type in set_terminal_text_color"
      ;;
      esac
 }
@@ -145,7 +145,7 @@ function set_terminal_text_background_color() {
      tput setab 7
      ;;
      *)
-     echo "not support color type"
+     echo "not support color type in set_terminal_text_background_color"
      ;;
      esac
 }
