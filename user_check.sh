@@ -125,10 +125,10 @@ function create_user_menu {
     echo "│ User:                                               │" >> user_menu.txt
     echo "│ Comment:                                            │" >> user_menu.txt
     echo "│ Shell:                                              │" >> user_menu.txt
-    echo "│ Passwd day:                                         │" >> user_menu.txt
+    echo "│ Primary group:                                      │" >> user_menu.txt
     echo "└─────────────────────────────────────────────────────┘" >> user_menu.txt
     echo "┌──UserOption─────────────────────────────────────────┐" >> user_menu.txt
-    echo "│ Edit comment               Edit passwd              │" >> user_menu.txt
+    echo "│ Edit comment               Edit group               │" >> user_menu.txt
     echo "│ Remove user                Return manu              │" >> user_menu.txt
     echo "└─────────────────────────────────────────────────────┘" >> user_menu.txt
     echo "  Input:" >> user_menu.txt

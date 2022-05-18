@@ -15,9 +15,9 @@ function comment_check {
     echo `grep /bin/bash /etc/passwd | grep -w $1  | cut -d ":"  -f 5`
 }
 
-#비밀번호 권장 비밀번호 변경일까지 남은 일 수 (사용 인자: $1=사용자 이름 ,반환: 남은 일 수) - 완성
-function passwd_day_check {
-    echo `grep -w $1 /etc/shadow | cut -d ":"  -f 5`
+#기본 그룹 조회 (사용 인자: $1=사용자 이름) - 완성
+function primary_group_check {
+    echo `groups $1 | cut -d":" -f 2 | cut -d" " -f 2`
 }
 
 #사용 쉘 조회 (사용 인자: $1=사용자 이름 ,반환: 쉘 이름) - 완성
@@ -52,11 +52,10 @@ function user_comment_edit {
     usermod -c $2 $1
 }
 
-#사용자 비밀번호 변경 (사용 인자: $1=사용자 이름) - 완성
-function user_passwd_edit {
-    passwd $1
+#유저 기본 기룹 변경 (사용 인자: $1=사용자 이름 $2=그룹이름 ) - 완성
+function user_group_edit {
+    usermod -g $2 $1
 }
-
 
 ###############################################
 #그룹 추가, 제거

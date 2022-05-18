@@ -15,9 +15,9 @@ function comment_check {
     echo `grep /bin/bash /etc/passwd | grep -w $1  | cut -d ":"  -f 5`
 }
 
-#비밀번호 권장 비밀번호 변경일까지 남은 일 수 (사용 인자: $1=사용자 이름 ,반환: 남은 일 수) - 완성
-function passwd_day_check {
-    echo `grep -w $1 /etc/shadow | cut -d ":"  -f 5`
+#기본 그룹 조회 (사용 인자: $1=사용자 이름) - 완성
+function primary_group_check {
+    echo `groups $1 | cut -d":" -f 2 | cut -d" " -f 2`
 }
 
 #사용 쉘 조회 (사용 인자: $1=사용자 이름 ,반환: 쉘 이름) - 완성
@@ -52,11 +52,10 @@ function user_comment_edit {
     usermod -c $2 $1
 }
 
-#사용자 비밀번호 변경 (사용 인자: $1=사용자 이름) - 완성
-function user_passwd_edit {
-    passwd $1
+#유저 기본 기룹 변경 (사용 인자: $1=사용자 이름 $2=그룹이름 ) - 완성
+function user_group_edit {
+    usermod -g $2 $1
 }
-
 
 ###############################################
 #그룹 추가, 제거
@@ -230,10 +229,10 @@ function create_user_menu {
     echo "│ User:                                               │" >> user_menu.txt
     echo "│ Comment:                                            │" >> user_menu.txt
     echo "│ Shell:                                              │" >> user_menu.txt
-    echo "│ Passwd day:                                         │" >> user_menu.txt
+    echo "│ Primary group:                                      │" >> user_menu.txt
     echo "└─────────────────────────────────────────────────────┘" >> user_menu.txt
     echo "┌──UserOption─────────────────────────────────────────┐" >> user_menu.txt
-    echo "│ Edit comment               Edit passwd              │" >> user_menu.txt
+    echo "│ Edit comment               Edit group               │" >> user_menu.txt
     echo "│ Remove user                Return manu              │" >> user_menu.txt
     echo "└─────────────────────────────────────────────────────┘" >> user_menu.txt
     echo "  Input:" >> user_menu.txt
@@ -369,8 +368,8 @@ function user_menu_control {
     comment_check $2
     tput cup ` expr $1 + 3 ` 9
     user_shell_check $2
-    tput cup ` expr $1 + 4 ` 14
-    passwd_day_check $2
+    tput cup ` expr $1 + 4 ` 17
+    primary_group_check $2
     #커서 범위(행은 범위 내에서 움직이고 열은 두 위치만 가능함)
     local Info_col_len=4
     local col_range_start=`expr $1 + $Info_col_len + 3 `
@@ -386,7 +385,7 @@ function user_menu_control {
     #초기 커서 셋팅
     tput cup $col 1
     put_cursor
-    tput cup $col_range 1
+    tput cup $col 1
     tput civis
 
     ######################################
@@ -465,9 +464,12 @@ function user_menu_control {
             fi
         #오른쪽 탭에 커서가 있는 경우
         elif [ $row -eq $row_pos2 ]; then
-            #1행에 커서가 있는 경우(Edit passwd)
+            #1행에 커서가 있는 경우(Edit group)
             if [ $col -eq $col_range_start ]; then
-                user_passwd_edit $2
+                read group_name
+                user_group_edit $2 $group_name
+                #기본 그룹 변경시 메인 메뉴 목록 초기화
+                main_menu_control
             #2행에 커서가 있는 경우(Return manu)
             elif [ $col -eq $col_range_end ]; then
                 u_end=1
@@ -542,7 +544,7 @@ function group_menu_control {
     #초기 커서 셋팅
     tput cup $col 1
     put_cursor
-    tput cup $col_range 1
+    tput cup $col 1
     tput civis
 
     ######################################
