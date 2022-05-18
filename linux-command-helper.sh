@@ -152,6 +152,21 @@ function set_terminal_text_background_color() {
 
 
 #######################################
+# 키 입력을 처리합니다.
+# Globals:
+#   None
+# Arguments:
+#   None
+# Outputs:
+#   입력 받은 키 값을 반환합니다.
+#######################################
+function input_key() {
+     read -s -n3 key
+     echo ${key}
+}
+
+
+#######################################
 # 전체 스크립트를 실행합니다.
 # Globals:
 #   None
@@ -161,7 +176,32 @@ function set_terminal_text_background_color() {
 #   None
 #######################################
 function linux_command_helper() {
-    clear_terminal
+     clear_terminal
+     hide_cursor
+
+     ESC=`printf "\033"`;
+
+     while true;
+     do
+          INPUT=$(input_key);
+
+          if [[ $INPUT = "" ]];
+          then break;
+          fi
+
+          if [[ $INPUT = $ESC[A ]]; then 
+          move_cursor 5 1
+          set_terminal_text_background_color "red"
+          echo "1. aaa"
+          elif [[ $INPUT = $ESC[B ]]; then
+          move_cursor 6 1
+          set_terminal_text_background_color "red"
+          echo "2. bbb"
+          fi
+
+     done
+
+     set_terminal_text_background_color "black"
 }
 
 # 스크립트를 실행합니다.
