@@ -129,8 +129,8 @@ declare -a select_menu_list=(
     "[01] ls helper"
     "[02] rm helper"
     "[03] user management helper"
-    "[04] github"
-    "[05] exit"
+    "[04] go to github repository"
+    "[05] exit linux command helper"
 )
 
 declare -i select_menu_index=0
@@ -307,14 +307,17 @@ function linux_command_helper() {
 
         if [[ "${detect_input_key}" != "" ]]; then
 
-            update_state "${detect_input_key}"
+            update_loop_state "${detect_input_key}"
         fi
 
         draw_select_menu
         draw_ok
     done
 
+    clear_terminal
     visible_cursor "on"
+    set_text_color "string" "white"
+    set_text_color "background" "black"
 }
 
 linux_command_helper
