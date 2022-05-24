@@ -8,8 +8,6 @@
 #
 ##################################################
 
-#방향키 입출력에 필요한 전역변수
-ESC=`printf "\033"`;
 
 #커서 기호 입력
 function put_cursor {
@@ -62,7 +60,7 @@ function clear_output {
 }
 
 #커서 이동 함수
-function ls_menu_control {
+function ls_helper {
     #메뉴 종료 변수(1되면 종료함)
     local ls_end=0
     #ls메뉴 텍스트 출력
@@ -175,4 +173,4 @@ function ls_menu_control {
     done
 }
 
-ls_menu_control
+ls_helper
