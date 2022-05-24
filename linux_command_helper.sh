@@ -263,7 +263,7 @@ declare -a manual_list=(
 )
 
 declare -i manual_list_size=6
-declare -i manual_line=20
+declare -i manual_line=21
 declare -i manual_col=0
 
 function draw_manual() {
