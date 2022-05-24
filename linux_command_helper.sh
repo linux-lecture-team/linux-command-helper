@@ -10,8 +10,20 @@ function move_cursor() {
      tput cup ${line} ${col}
 }
 
+function visible_cursor() {
+    option=$1
+
+    if [ ${option} == "on" ]; then
+        tput cnorm
+    elif [ ${option} == "off" ]; then
+        tput civis
+    fi
+}
+
 function linux_command_helper() {
+    visible_cursor "off"
     echo "Hello World!"
+    visible_cursor "on"
 }
 
 linux_command_helper
