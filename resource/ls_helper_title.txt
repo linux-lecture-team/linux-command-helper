@@ -1,0 +1,19 @@
+Welcom to ls-command helper !
+
+Move the cursor and select the option what you want.
+
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                        │
+│   Printing out all files and directories (Include hidden files and directories)        │
+│                                                                                        │
+│   Printing out detailed information such as permissions, owners, size                  │
+│                                                                                        │
+│   Printing out an item by displaying the type of item at the end of file and directory │
+│                                                                                        │
+│   printing out the thing reverse alphabetical order                                    │
+│                                                                                        │
+│   Printing out file and directory in order of correction time                          │
+│                                                                                        │
+│   printing out the thing sorted by file and directory size                             │
+│                                                                                        │
+└────────────────────────────────────────────────────────────────────────────────────────┘
