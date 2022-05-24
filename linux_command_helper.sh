@@ -244,6 +244,47 @@ function right_select_ok_index() {
 
 
 ##############################################################
+# 메뉴얼 출력 기능
+##############################################################
+linux_command_helper_manual=`cat resource/linux_command_helper.txt`
+ls_helper_manual=`cat resource/ls_helper.txt`
+rm_helper_manual=`cat resource/rm_helper.txt`
+user_management_helper_manual=`cat resource/user_management_helper.txt`
+go_to_github_repository_manual=`cat resource/go_to_github_repository.txt`
+exit_linux_command_helper_manual=`cat resource/exit_linux_command_helper.txt`
+
+declare -a manual_list=(
+    "${linux_command_helper_manual}"
+    "${ls_helper_manual}"
+    "$rm_helper_manual"
+    "${user_management_helper_manual}"
+    "${go_to_github_repository_manual}"
+    "${exit_linux_command_helper_manual}"
+)
+
+declare -i manual_list_size=6
+declare -i manual_line=25
+declare -i manual_col=0
+
+function draw_manual() {
+    move_cursor ${manual_line} ${manual_col}
+
+    set_text_color "string" "white"
+    set_text_color "background" "black"
+
+    for((index=0;index<${manual_list_size};index++))
+     do
+        if [ ${index} == ${select_menu_index} ]; then
+            echo "${manual_list[index]}"
+        fi
+    done
+
+    set_text_color "background" "black"
+}
+
+
+
+##############################################################
 # 전체 루프 상태 업데이트
 ##############################################################
 is_break_loop="no"
@@ -299,6 +340,7 @@ function linux_command_helper() {
     draw_main_title
     draw_select_menu
     draw_ok
+    draw_manual
 
     while true;
     do
@@ -309,12 +351,12 @@ function linux_command_helper() {
         detect_input_key=$(input_enter_and_arrow_key)
 
         if [[ "${detect_input_key}" != "" ]]; then
-
             update_loop_state "${detect_input_key}"
         fi
 
         draw_select_menu
         draw_ok
+        draw_manual
     done
 
     clear_terminal
