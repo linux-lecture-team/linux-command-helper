@@ -1,13 +1,6 @@
 #!/bin/bash
 
-
-
-##################################################
-#
-#   커서 이동에 필요한 가장 기본적인 스크립트
-#
-##################################################
-
+ls_helper_main_title=`cat resource/ls_helper_title.txt`
 
 #커서 기호 입력
 function put_cursor {
@@ -30,26 +23,7 @@ function move_cursor {
 
 #메뉴 출력 함수
 function print_ls_menu {
-    echo "Welcom to ls-command helper !"
-    echo ""
-    echo "Move the cursor and select the option what you want."
-    echo ""
-
-    echo "┌────────────────────────────────────────────────────────────────────────────────────────┐"
-    echo "│                                                                                        │"
-    echo "│   Printing out all files and directories (Include hidden files and directories)        │"
-    echo "│                                                                                        │"
-    echo "│   Printing out detailed information such as permissions, owners, size                  │"
-    echo "│                                                                                        │"
-    echo "│   Printing out an item by displaying the type of item at the end of file and directory │"
-    echo "│                                                                                        │"
-    echo "│   printing out the thing reverse alphabetical order                                    │"
-    echo "│                                                                                        │"
-    echo "│   Printing out file and directory in order of correction time                          │"
-    echo "│                                                                                        │"
-    echo "│   printing out the thing sorted by file and directory size                             │"
-    echo "│                                                                                        │"
-    echo "└────────────────────────────────────────────────────────────────────────────────────────┘"
+    echo "${ls_helper_main_title}"
 }
 
 #명령어 출력결과가 출력되는 부분을 치우는 함수(다 정리되지 않는 다면 반복 횟수를 늘리면 됩니다.)
@@ -63,8 +37,8 @@ function clear_output {
 function ls_helper {
     #메뉴 종료 변수(1되면 종료함)
     local ls_end=0
+
     #ls메뉴 텍스트 출력
-    clear
     print_ls_menu
     #커서 범위(행은 범위 내에서 움직이고 열은 두 위치만 가능함)
     local opt_num=6 #옵션 갯수
