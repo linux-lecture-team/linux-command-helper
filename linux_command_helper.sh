@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ##############################################################
-# 공통 기능 시작
+# 스크립트 공통 기능
 ##############################################################
 function clear_terminal() {
     echo -n `clear`
@@ -117,13 +117,13 @@ function input_enter_and_arrow_key() {
 
 
 ##############################################################
-# linux command helper 내부 리소스 시작
+# linux command helper 내부 리소스
 ##############################################################
 linux_command_helper_main_title=`cat resource/main_title.txt`
 
 
 ##############################################################
-# select menu 기능 시작
+# select menu
 ##############################################################
 declare -a select_menu_list=(
     "[01] linux command helper"
@@ -180,7 +180,7 @@ function down_select_menu_index() {
 
 
 ##############################################################
-# ok 기능 시작
+# ok 기능
 ##############################################################
 declare -a select_ok_list=(
     "[    OK    ]"
@@ -244,7 +244,7 @@ function right_select_ok_index() {
 
 
 ##############################################################
-# 메뉴얼 출력 기능
+# 메뉴얼
 ##############################################################
 linux_command_helper_manual=`cat resource/linux_command_helper.txt`
 ls_helper_manual=`cat resource/ls_helper.txt`
@@ -263,7 +263,7 @@ declare -a manual_list=(
 )
 
 declare -i manual_list_size=6
-declare -i manual_line=25
+declare -i manual_line=20
 declare -i manual_col=0
 
 function draw_manual() {
@@ -307,7 +307,7 @@ function update_loop_state() {
         if [ ${is_select_ok} == 0 ]; then
             is_select_ok=1
         else # ${is_select_ok} == 1
-            if [ ${select_ok_index} == 0 ]; then
+            if [ ${select_ok_index} == 0 -a ${select_menu_index} != 0 ]; then
             is_break_loop="yes"
             else
             is_select_ok=0
@@ -326,6 +326,33 @@ function update_loop_state() {
         right_select_ok_index
         fi
     fi
+}
+
+##############################################################
+# 사용자가 선택한 옵션 실행
+##############################################################
+function run_select_option() {
+    case ${select_menu_index} in
+    1)
+    source source/ls_helper.sh
+    ;;
+
+    2)
+    source source/rm_helper.sh
+    ;;
+
+    3)
+    source source/user_management_helper.sh
+    ;;
+
+    4)
+    echo "github repository https://github.com/linux-lecture-team/linux-command-helper"
+    ;;
+
+    *)
+    echo -n ""
+    ;;
+    esac
 }
 
 
@@ -363,6 +390,8 @@ function linux_command_helper() {
     visible_cursor "on"
     set_text_color "string" "white"
     set_text_color "background" "black"
+
+    run_select_option
 }
 
 linux_command_helper
