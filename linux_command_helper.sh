@@ -120,9 +120,56 @@ function input_enter_and_arrow_key() {
 
 linux_command_helper_main_title=`cat resource/main_title.txt`
 
+declare -a select_menu_list=(
+    "[01] ls helper"
+    "[02] rm helper"
+    "[03] user management helper"
+    "[04] github"
+    "[05] exit"
+)
+
+declare -i select_menu_index=0
+declare -i select_menu_min_index=0
+declare -i select_menu_max_index=4
+declare -i select_menu_list_size=5
+declare -i select_menu_line=14
+declare -i select_menu_col=2
+
 function draw_main_title() {
     move_cursor 0 0
     echo "${linux_command_helper_main_title}"
+}
+
+function up_select_menu_index() {
+     select_menu_index=`expr ${select_menu_index} - 1`
+
+     if [[ ${select_menu_index} < ${select_menu_min_index} ]]; then
+          select_menu_index=select_menu_max_index
+     fi
+}
+
+function down_select_menu_index() {
+     select_menu_index=`expr ${select_menu_index} + 1`
+
+     if [[ ${select_menu_index} > ${select_menu_max_index} ]]; then
+          select_menu_index=select_menu_min_index
+     fi
+}
+
+function draw_select_menu() {
+     for((index=0;index<${select_menu_list_size};index++))
+     do
+          if [ ${index} == ${select_menu_index} ]; then
+               set_text_color "background" "red"
+          else
+               set_text_color "background" "black"
+          fi
+
+          move_cursor `expr ${index} + ${select_menu_line}` ${select_menu_col}
+          echo "${select_menu_list[index]}"
+     done
+
+     set_text_color "background" "black"
 }
 
 function linux_command_helper() {
@@ -138,25 +185,29 @@ function linux_command_helper() {
 
         if [[ "${detect_input_key}" != "" ]]; then
             if [ "${detect_input_key}" == "up" ]; then
-                echo "insert up"
+                up_select_menu_index
             fi
 
             if [ "${detect_input_key}" == "down" ]; then
-                echo "insert down"
+                down_select_menu_index
             fi
 
-            if [ "${detect_input_key}" == "left" ]; then
-                echo "insert left"
-            fi
+            # left, right, enter 는 주석 처리
+            # if [ "${detect_input_key}" == "left" ]; then
+            #     echo "insert left"
+            # fi
 
-            if [ "${detect_input_key}" == "right" ]; then
-                echo "insert right"
-            fi           
+            # if [ "${detect_input_key}" == "right" ]; then
+            #     echo "insert right"
+            # fi           
 
-            if [ "${detect_input_key}" == "enter" ]; then
-                echo "inter enter"
-            fi
+            # if [ "${detect_input_key}" == "enter" ]; then
+            #     echo "inter enter"
+            # fi
         fi
+
+        draw_select_menu
+
     done
 
     visible_cursor "on"
