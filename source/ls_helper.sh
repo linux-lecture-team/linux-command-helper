@@ -11,12 +11,6 @@
 #방향키 입출력에 필요한 전역변수
 ESC=`printf "\033"`;
 
-#키보드 입력(방향키,엔터)를 입력받는
-function input_key {
-    read -s -n3 INPUT
-    echo $INPUT
-}
-
 #커서 기호 입력
 function put_cursor {
     echo -n " >"
@@ -156,17 +150,28 @@ function ls_menu_control {
     ######################################
 
     while (($ls_end == 0)); do
-        INPUT=$(input_key)
-        if [[ $INPUT = "" ]]; then
-            ls_move_enter
-        elif [[ $INPUT = $ESC[A ]]; then
+        detect_input_key=$(input_enter_and_arrow_key)
+
+        if [ "${detect_input_key}" == "up" ]; then
             ls_move_up
-        elif [[ $INPUT = $ESC[B ]]; then
+        elif [ "${detect_input_key}" == "down" ]; then
             ls_move_down
+        elif [ "${detect_input_key}" == "enter" ]; then
+            ls_move_enter
         fi
-        #원인은 모르겠지만 커서 동작후 감추기 옵션이 계속 풀림
-        #루프를 돌때마다 감추기 옵션 활성화
-        tput civis
+
+        visible_cursor "off"
+
+        # INPUT=$(input_key)
+        # if [[ $INPUT = "" ]]; then
+        #     ls_move_enter
+        # elif [[ $INPUT = $ESC[A ]]; then
+        #     ls_move_up
+        # elif [[ $INPUT = $ESC[B ]]; then
+        #     ls_move_down
+        # fi
+    
+        # tput civis
     done
 }
 
