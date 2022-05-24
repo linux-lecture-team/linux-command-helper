@@ -134,17 +134,6 @@ function ls_helper {
         fi
 
         visible_cursor "off"
-
-        # INPUT=$(input_key)
-        # if [[ $INPUT = "" ]]; then
-        #     ls_move_enter
-        # elif [[ $INPUT = $ESC[A ]]; then
-        #     ls_move_up
-        # elif [[ $INPUT = $ESC[B ]]; then
-        #     ls_move_down
-        # fi
-    
-        # tput civis
     done
 }
 
