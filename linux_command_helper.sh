@@ -192,13 +192,53 @@ declare -i select_ok_max_index=1
 declare -i select_ok_list_size=2
 declare -i select_ok_line=18
 declare -i select_ok_col=40
+declare -i is_select_ok=0
 
 function draw_ok() {
-    move_cursor ${select_ok_line} ${select_ok_col}
-    echo "${select_ok_list[0]}"
 
-    move_cursor ${select_ok_line} `expr ${select_ok_col} + 15`
-    echo "${select_ok_list[1]}"
+    if [ ${is_select_ok} == 1 ]; then
+        if [ ${select_ok_index} == ${select_ok_min_index} ]; then
+            set_text_color "background" "red"
+        else 
+            set_text_color "background" "black"
+        fi
+
+        move_cursor ${select_ok_line} ${select_ok_col}
+        echo "${select_ok_list[0]}"
+
+
+        if [ ${select_ok_index} == ${select_ok_max_index} ]; then
+            set_text_color "background" "red"
+        else 
+            set_text_color "background" "black"
+        fi
+        move_cursor ${select_ok_line} `expr ${select_ok_col} + 15`
+        echo "${select_ok_list[1]}"
+    else
+        set_text_color "background" "black"
+
+        move_cursor ${select_ok_line} ${select_ok_col}
+        echo "            "
+
+        move_cursor ${select_ok_line} `expr ${select_ok_col} + 15`
+        echo "            "
+    fi
+}
+
+function left_select_ok_index() {
+    select_ok_index=`expr ${select_ok_index} - 1`
+
+    if [[ ${select_ok_index} < ${select_ok_min_index} ]]; then
+        select_ok_index=select_ok_max_index
+    fi
+}
+
+function right_select_ok_index() {
+    select_ok_index=`expr ${select_ok_index} + 1`
+
+    if [[ ${select_ok_index} > ${select_ok_max_index} ]]; then
+        select_ok_index=select_ok_min_index
+    fi
 }
 
 
@@ -207,7 +247,7 @@ function draw_ok() {
 ##############################################################
 function linux_command_helper() {
     visible_cursor "off"
-    set_text_color "string" "yellow"
+    set_text_color "string" "white"
 
     clear_terminal
     draw_main_title
@@ -218,30 +258,39 @@ function linux_command_helper() {
 
         if [[ "${detect_input_key}" != "" ]]; then
             if [ "${detect_input_key}" == "up" ]; then
+                is_select_ok=0
                 up_select_menu_index
             fi
 
             if [ "${detect_input_key}" == "down" ]; then
+                is_select_ok=0
                 down_select_menu_index
             fi
 
-            # left, right, enter 는 주석 처리
-            # if [ "${detect_input_key}" == "left" ]; then
-            #     echo "insert left"
-            # fi
+            if [ "${detect_input_key}" == "enter" ]; then
 
-            # if [ "${detect_input_key}" == "right" ]; then
-            #     echo "insert right"
-            # fi           
+                if [ ${is_select_ok} == 0 ]; then
+                    is_select_ok=1
+                else # ${is_select_ok} == 1
+                    break
+                fi
+            fi
 
-            # if [ "${detect_input_key}" == "enter" ]; then
-            #     echo "inter enter"
-            # fi
+            if [ "${detect_input_key}" == "left" ]; then
+                if [ ${is_select_ok} == 1 ]; then
+                left_select_ok_index
+                fi
+            fi
+
+            if [ "${detect_input_key}" == "right" ]; then
+                if [ ${is_select_ok} == 1 ]; then
+                right_select_ok_index
+                fi
+            fi
         fi
 
         draw_select_menu
         draw_ok
-
     done
 
     visible_cursor "on"
