@@ -360,7 +360,9 @@ function user_menu_control {
     local u_end=0
     #메뉴 텍스트 출력
     tput cup $1 0
+    create_user_menu
     cat user_menu.txt
+    rm user_menu.txt
     #UserInfo 채우기
     tput cup ` expr $1 + 1 ` 8
     echo $2
@@ -444,7 +446,9 @@ function user_menu_control {
     function user_move_enter {
         #Input 공간 정리
         tput cup $(($1+10)) 0
+        creat_input_menu
         cat Input.txt
+        rm Input.txt
         tput cup $(($1+10)) 9
         tput cnorm
         #이전 커서 위치 정보 저장
@@ -509,7 +513,9 @@ function group_menu_control {
     local g_end=0
     #메뉴 텍스트 출력
     tput cup $1 0
+    create_group_menu
     cat group_menu.txt
+    rm group_menu.txt
     #MemberList 채우기
     local member_list=`grep -w $2 /etc/group | cut -d ":"  -f 4`
     member_list+=","
@@ -603,7 +609,9 @@ function group_menu_control {
     function group_move_enter {
         #Input 공간 정리
         tput cup $(($1+10)) 0
+       creat_input_menu
         cat Input.txt
+        rm Input.txt
         tput cup $(($1+10)) 9
         tput cnorm
         #$2가 gid라 이를 그룹명으로 저장
@@ -680,14 +688,12 @@ function group_menu_control {
 function main_menu_control {
     creat_user_var
     create_user_DB
-    create_main_menu
-    create_user_menu 
-    create_group_menu
-    creat_input_menu
     
     #메인 메뉴로 돌아올 때는 화면초기화
     clear
+    create_main_menu
     cat main_menu.txt
+    rm main_menu.txt
     #초기 커서 셋팅
     tput cup 1 1
     put_cursor
@@ -773,7 +779,9 @@ function main_menu_control {
         if [ $col -eq $col_option ]; then
             #Input 공간 정리
             tput cup `expr $col_option + 2` 0
+            creat_input_menu
             cat Input.txt
+            rm Input.txt
             tput cup `expr $col_option + 2` 9
             tput cnorm
             if [ $row -eq $row_pos1 ]; then
