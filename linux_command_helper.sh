@@ -118,13 +118,19 @@ function input_enter_and_arrow_key() {
 # 프로젝트 공통 기능 끝
 ##############################################################
 
-
 linux_command_helper_main_title=`cat resource/main_title.txt`
+
+function draw_main_title() {
+    move_cursor 0 0
+    echo "${linux_command_helper_main_title}"
+}
 
 function linux_command_helper() {
     visible_cursor "off"
     set_text_color "string" "yellow"
-    echo "${linux_command_helper_main_title}"
+
+    clear_terminal
+    draw_main_title
 
     while true;
     do
