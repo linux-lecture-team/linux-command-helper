@@ -1,20 +1,20 @@
 #!/bin/bash
 
-ls_helper_main_title=`cat resource/ls_helper_title.txt`
+ls_helper_main_menu=`cat resource/ls_helper_main_menu.txt`
 
 
 #커서 기호 입력
-function put_cursor {
+function put_cursor() {
     echo -n " >"
 }
 
 #커서 기호 삭제
-function del_cursor {
+function del_cursor() {
     echo -n "  "
 }
 
 #커서 이동 ( $1: $pre_col $2: $pre_row $3: $col $4: $row )
-function move_arrow_cursor {
+function move_arrow_cursor() {
     tput cup $1 $2
     del_cursor
     tput cup $3 $4
@@ -23,23 +23,24 @@ function move_arrow_cursor {
 }
 
 #메뉴 출력 함수
-function print_ls_menu {
-    echo "${ls_helper_main_title}"
+function draw_ls_main_menu() {
+    echo "${ls_helper_main_menu}"
 }
 
 #명령어 출력결과가 출력되는 부분을 치우는 함수(다 정리되지 않는 다면 반복 횟수를 늘리면 됩니다.)
-function clear_output {
+function clear_output() {
     for(( i=0;i<15;i++)); do
         echo "                                                                                                                                                          "
     done
 }
 
 #커서 이동 함수
-function ls_helper {
+function ls_helper() {
     
 
     #ls메뉴 텍스트 출력
-    print_ls_menu
+    draw_ls_main_menu
+
     #커서 범위(행은 범위 내에서 움직이고 열은 두 위치만 가능함)
     local opt_num=6 #옵션 갯수
     local col_range_start=6
@@ -62,7 +63,7 @@ function ls_helper {
     #
     ######################################
 
-    function ls_move_up {
+    function ls_move_up() {
         #이전 커서 위치 정보 저장
         pre_row=$row
         pre_col=$col
@@ -76,7 +77,7 @@ function ls_helper {
         move_arrow_cursor $pre_col $pre_row $col $row
     }
 
-    function ls_move_down {
+    function ls_move_down() {
         #이전 커서 위치 정보 저장
         pre_row=$row
         pre_col=$col
@@ -91,7 +92,7 @@ function ls_helper {
     }
 
     #($1 2: 상위 스크립트 1 2번 인자)
-    function ls_move_enter {
+    function ls_move_enter() {
         #이전 커서 위치 정보 저장
         pre_row=$row
         pre_col=$col
@@ -113,13 +114,6 @@ function ls_helper {
             ls -S
         fi
     }
-
-    ######################################
-    #
-    #ls 관리 메뉴 동작 코드
-    #(실제로 키보드 입력을 받고 커서를 이동시키는 하는 함수)
-    #
-    ######################################
 
     while true;
     do
