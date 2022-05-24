@@ -96,6 +96,24 @@ function set_text_color() {
     ;;
     esac
 }
+
+function input_enter_and_arrow_key() {
+    escape_char=$(printf "\u1b")
+    read -rsn1 key
+
+    if [[ $key == $escape_char ]]; then
+        read -rsn2 key
+    fi
+
+    case $key in
+        '[A') echo "up" ;;
+        '[B') echo "down" ;;
+        '[D') echo "left" ;;
+        '[C') echo "right" ;;
+        '') echo "enter" ;;
+        *) >&2 echo -n "" ;;
+    esac
+}
 ##############################################################
 # 프로젝트 공통 기능 끝
 ##############################################################
@@ -107,6 +125,34 @@ function linux_command_helper() {
     visible_cursor "off"
     set_text_color "string" "yellow"
     echo "${linux_command_helper_main_title}"
+
+    while true;
+    do
+        detect_input_key=$(input_enter_and_arrow_key)
+
+        if [[ "${detect_input_key}" != "" ]]; then
+            if [ "${detect_input_key}" == "up" ]; then
+                echo "insert up"
+            fi
+
+            if [ "${detect_input_key}" == "down" ]; then
+                echo "insert down"
+            fi
+
+            if [ "${detect_input_key}" == "left" ]; then
+                echo "insert left"
+            fi
+
+            if [ "${detect_input_key}" == "right" ]; then
+                echo "insert right"
+            fi           
+
+            if [ "${detect_input_key}" == "enter" ]; then
+                echo "inter enter"
+            fi
+        fi
+    done
+
     visible_cursor "on"
 }
 
