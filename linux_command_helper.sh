@@ -243,6 +243,51 @@ function right_select_ok_index() {
 
 
 ##############################################################
+# 전체 루프 상태 업데이트
+##############################################################
+is_break_loop="no"
+
+function update_loop_state() {
+    detect_input_key=$1
+
+    if [ "${detect_input_key}" == "up" ]; then
+                is_select_ok=0
+                up_select_menu_index
+    fi
+
+    if [ "${detect_input_key}" == "down" ]; then
+        is_select_ok=0
+        down_select_menu_index
+    fi
+
+    if [ "${detect_input_key}" == "enter" ]; then
+
+        if [ ${is_select_ok} == 0 ]; then
+            is_select_ok=1
+        else # ${is_select_ok} == 1
+            if [ ${select_ok_index} == 0 ]; then
+            is_break_loop="yes"
+            else
+            is_select_ok=0
+            fi
+        fi
+    fi
+
+    if [ "${detect_input_key}" == "left" ]; then
+        if [ ${is_select_ok} == 1 ]; then
+        left_select_ok_index
+        fi
+    fi
+
+    if [ "${detect_input_key}" == "right" ]; then
+        if [ ${is_select_ok} == 1 ]; then
+        right_select_ok_index
+        fi
+    fi
+}
+
+
+##############################################################
 # 전체 스크립트 실행 부분 시작
 ##############################################################
 function linux_command_helper() {
@@ -254,43 +299,15 @@ function linux_command_helper() {
 
     while true;
     do
+        if [ "${is_break_loop}" == "yes" ]; then
+        break
+        fi
+
         detect_input_key=$(input_enter_and_arrow_key)
 
         if [[ "${detect_input_key}" != "" ]]; then
-            if [ "${detect_input_key}" == "up" ]; then
-                is_select_ok=0
-                up_select_menu_index
-            fi
 
-            if [ "${detect_input_key}" == "down" ]; then
-                is_select_ok=0
-                down_select_menu_index
-            fi
-
-            if [ "${detect_input_key}" == "enter" ]; then
-
-                if [ ${is_select_ok} == 0 ]; then
-                    is_select_ok=1
-                else # ${is_select_ok} == 1
-                    if [ ${select_ok_index} == 0 ]; then
-                    break
-                    else
-                    is_select_ok=0
-                    fi
-                fi
-            fi
-
-            if [ "${detect_input_key}" == "left" ]; then
-                if [ ${is_select_ok} == 1 ]; then
-                left_select_ok_index
-                fi
-            fi
-
-            if [ "${detect_input_key}" == "right" ]; then
-                if [ ${is_select_ok} == 1 ]; then
-                right_select_ok_index
-                fi
-            fi
+            update_state "${detect_input_key}"
         fi
 
         draw_select_menu
