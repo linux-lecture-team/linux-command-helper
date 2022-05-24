@@ -2,6 +2,7 @@
 
 ls_helper_main_title=`cat resource/ls_helper_title.txt`
 
+
 #커서 기호 입력
 function put_cursor {
     echo -n " >"
@@ -13,7 +14,7 @@ function del_cursor {
 }
 
 #커서 이동 ( $1: $pre_col $2: $pre_row $3: $col $4: $row )
-function move_cursor {
+function move_arrow_cursor {
     tput cup $1 $2
     del_cursor
     tput cup $3 $4
@@ -35,8 +36,7 @@ function clear_output {
 
 #커서 이동 함수
 function ls_helper {
-    #메뉴 종료 변수(1되면 종료함)
-    local ls_end=0
+    
 
     #ls메뉴 텍스트 출력
     print_ls_menu
@@ -73,7 +73,7 @@ function ls_helper {
         elif [ $col -ne $col_range_start ]; then
             col=$((col-2))
         fi
-        move_cursor $pre_col $pre_row $col $row
+        move_arrow_cursor $pre_col $pre_row $col $row
     }
 
     function ls_move_down {
@@ -87,7 +87,7 @@ function ls_helper {
         elif [ $col -ne $col_range_end ]; then
             col=$((col+2))
         fi
-        move_cursor $pre_col $pre_row $col $row
+        move_arrow_cursor $pre_col $pre_row $col $row
     }
 
     #($1 2: 상위 스크립트 1 2번 인자)
@@ -121,7 +121,8 @@ function ls_helper {
     #
     ######################################
 
-    while (($ls_end == 0)); do
+    while true;
+    do
         detect_input_key=$(input_enter_and_arrow_key)
 
         if [ "${detect_input_key}" == "up" ]; then
