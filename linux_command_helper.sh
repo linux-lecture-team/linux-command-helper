@@ -100,10 +100,13 @@ function set_text_color() {
 # 프로젝트 공통 기능 끝
 ##############################################################
 
+
+linux_command_helper_main_title=`cat resource/main_title.txt`
+
 function linux_command_helper() {
     visible_cursor "off"
     set_text_color "string" "yellow"
-    echo "Hello World!"
+    echo "${linux_command_helper_main_title}"
     visible_cursor "on"
 }
 
