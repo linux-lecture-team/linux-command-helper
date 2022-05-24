@@ -502,25 +502,11 @@ function update_loop_state() {
 #######################################
 function run_select_option() {
     case ${select_menu_index} in
-    1)
-    source source/ls_helper.sh
-    ;;
-
-    2)
-    source source/rm_helper.sh
-    ;;
-
-    3)
-    source source/user_management_helper.sh
-    ;;
-
-    4)
-    echo "github repository https://github.com/linux-lecture-team/linux-command-helper"
-    ;;
-
-    *)
-    echo -n ""
-    ;;
+    1) source source/ls_helper.sh ;;
+    2) source source/rm_helper.sh ;;
+    3) source source/user_management_helper.sh ;;
+    4) echo "github repository https://github.com/linux-lecture-team/linux-command-helper" ;;
+    *) echo -n "" ;;
     esac
 }
 
