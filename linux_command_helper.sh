@@ -126,17 +126,18 @@ linux_command_helper_main_title=`cat resource/main_title.txt`
 # select menu 기능 시작
 ##############################################################
 declare -a select_menu_list=(
-    "[01] ls helper"
-    "[02] rm helper"
-    "[03] user management helper"
-    "[04] go to github repository"
-    "[05] exit linux command helper"
+    "[01] linux command helper"
+    "[02] ls helper"
+    "[03] rm helper"
+    "[04] user management helper"
+    "[05] go to github repository"
+    "[06] exit linux command helper"
 )
 
 declare -i select_menu_index=0
 declare -i select_menu_min_index=0
-declare -i select_menu_max_index=4
-declare -i select_menu_list_size=5
+declare -i select_menu_max_index=5
+declare -i select_menu_list_size=6
 declare -i select_menu_line=14
 declare -i select_menu_col=2
 
@@ -296,6 +297,8 @@ function linux_command_helper() {
 
     clear_terminal
     draw_main_title
+    draw_select_menu
+    draw_ok
 
     while true;
     do
