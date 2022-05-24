@@ -114,12 +114,17 @@ function input_enter_and_arrow_key() {
         *) >&2 echo -n "" ;;
     esac
 }
-##############################################################
-# 프로젝트 공통 기능 끝
-##############################################################
 
+
+##############################################################
+# linux command helper 내부 리소스 시작
+##############################################################
 linux_command_helper_main_title=`cat resource/main_title.txt`
 
+
+##############################################################
+# select menu 기능 시작
+##############################################################
 declare -a select_menu_list=(
     "[01] ls helper"
     "[02] rm helper"
@@ -140,22 +145,6 @@ function draw_main_title() {
     echo "${linux_command_helper_main_title}"
 }
 
-function up_select_menu_index() {
-     select_menu_index=`expr ${select_menu_index} - 1`
-
-     if [[ ${select_menu_index} < ${select_menu_min_index} ]]; then
-          select_menu_index=select_menu_max_index
-     fi
-}
-
-function down_select_menu_index() {
-     select_menu_index=`expr ${select_menu_index} + 1`
-
-     if [[ ${select_menu_index} > ${select_menu_max_index} ]]; then
-          select_menu_index=select_menu_min_index
-     fi
-}
-
 function draw_select_menu() {
      for((index=0;index<${select_menu_list_size};index++))
      do
@@ -172,6 +161,50 @@ function draw_select_menu() {
      set_text_color "background" "black"
 }
 
+function up_select_menu_index() {
+     select_menu_index=`expr ${select_menu_index} - 1`
+
+     if [[ ${select_menu_index} < ${select_menu_min_index} ]]; then
+          select_menu_index=select_menu_max_index
+     fi
+}
+
+function down_select_menu_index() {
+     select_menu_index=`expr ${select_menu_index} + 1`
+
+     if [[ ${select_menu_index} > ${select_menu_max_index} ]]; then
+          select_menu_index=select_menu_min_index
+     fi
+}
+
+
+##############################################################
+# ok 기능 시작
+##############################################################
+declare -a select_ok_list=(
+    "[    OK    ]"
+    "[  CANCEL  ]"
+)
+
+declare -i select_ok_index=0
+declare -i select_ok_min_index=0
+declare -i select_ok_max_index=1
+declare -i select_ok_list_size=2
+declare -i select_ok_line=18
+declare -i select_ok_col=40
+
+function draw_ok() {
+    move_cursor ${select_ok_line} ${select_ok_col}
+    echo "${select_ok_list[0]}"
+
+    move_cursor ${select_ok_line} `expr ${select_ok_col} + 15`
+    echo "${select_ok_list[1]}"
+}
+
+
+##############################################################
+# 전체 스크립트 실행 부분 시작
+##############################################################
 function linux_command_helper() {
     visible_cursor "off"
     set_text_color "string" "yellow"
@@ -207,6 +240,7 @@ function linux_command_helper() {
         fi
 
         draw_select_menu
+        draw_ok
 
     done
 
