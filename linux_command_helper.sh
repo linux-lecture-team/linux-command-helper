@@ -272,7 +272,11 @@ function linux_command_helper() {
                 if [ ${is_select_ok} == 0 ]; then
                     is_select_ok=1
                 else # ${is_select_ok} == 1
+                    if [ ${select_ok_index} == 0 ]; then
                     break
+                    else
+                    is_select_ok=0
+                    fi
                 fi
             fi
 
