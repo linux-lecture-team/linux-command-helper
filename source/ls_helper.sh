@@ -36,7 +36,6 @@ function clear_output() {
 
 #커서 이동 함수
 function ls_helper() {
-    
 
     #ls메뉴 텍스트 출력
     draw_ls_main_menu
@@ -45,23 +44,20 @@ function ls_helper() {
     local opt_num=6 #옵션 갯수
     local col_range_start=6
     local col_range_end=16
+
     #이전 커서 위치(열,행)
     local pre_row=1
     local pre_col=$col_range_start
+
     #현재 커서 위치(열,행)
     local row=1
     local col=$col_range_start
+
     #초기 커서 셋팅
     tput cup $col 1
     put_cursor
     tput cup $col 1
     tput civis
-
-    ######################################
-    #
-    # 관리 메뉴 커서 이동 함수
-    #
-    ######################################
 
     function ls_move_up() {
         #이전 커서 위치 정보 저장
