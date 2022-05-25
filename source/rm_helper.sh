@@ -16,10 +16,10 @@ declare -i remove_file_or_directory_col=2
 remove_backup_path=""
 
 # 백업 경로 입력 받는 부분의 라인입니다.
-declare -i remove_backup_path_line=12
+declare -i remove_backup_path_line=`expr ${remove_file_or_directory_line} + 2`
 
 # 백업 경로 입력 받는 부분의 열입니다.
-declare -i remove_backup_path_col=2
+declare -i remove_backup_path_col=remove_file_or_directory_col
 
 function draw_rm_helper_main_title() {
      move_cursor 0 0
