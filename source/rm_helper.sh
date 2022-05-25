@@ -6,15 +6,21 @@ rm_helper_main_title=`cat resource/rm_helper_main_title.txt`
 # 삭제할 파일 혹은 디렉토리입니다.
 remove_file_or_directory=""
 
+# 삭제할 파일 혹은 디렉토리 입력 받는 부분의 라인입니다.
+declare -i remove_file_or_directory_line=12
+
+# 삭제할 파일 혹은 디렉토리 입력 받는 부분의 열입니다.
+declare -i remove_file_or_directory_col=4
+
 function draw_rm_helper_main_title() {
      move_cursor 0 0
      echo "${rm_helper_main_title}"
 }
 
 function input_remove_file_or_directory() {
-     move_cursor 12 4
+     move_cursor ${remove_file_or_directory_line} ${remove_file_or_directory_col}
      echo "Input Remove File or Directory"
-     move_cursor 13 4
+     move_cursor `expr ${remove_file_or_directory_line} + 1` ${remove_file_or_directory_col}
      echo -n "> "
      read remove_file_or_directory
 }
