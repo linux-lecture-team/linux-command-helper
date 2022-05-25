@@ -7,10 +7,19 @@ rm_helper_main_title=`cat resource/rm_helper_main_title.txt`
 remove_file_or_directory=""
 
 # 삭제할 파일 혹은 디렉토리 입력 받는 부분의 라인입니다.
-declare -i remove_file_or_directory_line=12
+declare -i remove_file_or_directory_line=10
 
 # 삭제할 파일 혹은 디렉토리 입력 받는 부분의 열입니다.
-declare -i remove_file_or_directory_col=4
+declare -i remove_file_or_directory_col=2
+
+# 삭제할 파일 혹은 디렉토리의 백업 경로입니다.
+remove_backup_path=""
+
+# 백업 경로 입력 받는 부분의 라인입니다.
+declare -i remove_backup_path_line=12
+
+# 백업 경로 입력 받는 부분의 열입니다.
+declare -i remove_backup_path_col=2
 
 function draw_rm_helper_main_title() {
      move_cursor 0 0
@@ -25,6 +34,14 @@ function input_remove_file_or_directory() {
      read remove_file_or_directory
 }
 
+function input_backup_directory() {
+     move_cursor ${remove_backup_path_line} ${remove_backup_path_col}
+     echo "Input Backup Path"
+     move_cursor `expr ${remove_backup_path_line} + 1` ${remove_backup_path_col}
+     echo -n "> "
+     read remove_backup_path
+}
+
 function rm_helper() {
      visible_cursor "off"
 
@@ -32,7 +49,7 @@ function rm_helper() {
      visible_cursor "on"
 
      input_remove_file_or_directory
-     echo "Remove : $remove_file_or_directory"
+     input_backup_directory
 }
 
 rm_helper
