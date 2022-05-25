@@ -1,8 +1,29 @@
 #!/bin/bash
 
+# rm_helper의 메인 타이틀입니다.
 rm_helper_main_title=`cat resource/rm_helper_main_title.txt`
 
-echo "${rm_helper_main_title}"
+function draw_rm_helper_main_title() {
+     move_cursor 0 0
+     echo "${rm_helper_main_title}"
+}
+
+function rm_helper() {
+     visible_cursor "off"
+     
+     draw_rm_helper_main_title
+     visible_cursor "on"
+
+     move_cursor 12 4
+     echo "Input Remove File or Directory"
+     move_cursor 13 4
+     echo -n "> "
+     read remove_file_or_directory
+     move_cursor 14 4
+     echo "Remove : $remove_file_or_directory"
+}
+
+rm_helper
 
 # function rm_helper() {
 #      now=$(date +%Y%m%d)
