@@ -42,7 +42,6 @@
 |---|---|
 | `WSL2` | O |
 | `Ubuntu 20.04 LTS` | O |
-| `MacOS` | O |
 
 <br><br>
 
