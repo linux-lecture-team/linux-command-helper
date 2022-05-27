@@ -540,11 +540,11 @@ function user_menu_control {
     move_cursor ` expr $row_begin + 1 ` 8
     echo $user
     move_cursor ` expr $row_begin + 2 ` 11
-    get_user_comment $user
+    echo `get_user_comment $user`
     move_cursor ` expr $row_begin + 3 ` 9
-    get_user_shell $user
+    echo `get_user_shell $user`
     move_cursor ` expr $row_begin + 4 ` 17
-    get_user_primary_group $user
+    echo `get_user_primary_group $user`
     #커서 범위(행은 범위 내에서 움직이고 열은 두 위치만 가능함)
     local Info_row_len=4
     local row_range_begin=`expr $row_begin + $Info_row_len + 3 `
