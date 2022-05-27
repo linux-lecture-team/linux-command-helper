@@ -1,15 +1,5 @@
 #!/bin/bash
 
-function clear_terminal() {
-    echo -n `clear`
-}
-
-function move_cursor() {
-     line=$1
-     col=$2
-     tput cup ${line} ${col}
-}
-
 declare -i input_cursor_line=5
 declare -i input_cursor_col=0
 
