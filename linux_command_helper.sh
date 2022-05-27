@@ -457,6 +457,7 @@ function run_select_option() {
 function linux_command_helper() {
     visible_cursor "off"
     set_text_color "string" "white"
+    set_text_color "background" "black"
 
     clear_terminal
     draw_main_title
