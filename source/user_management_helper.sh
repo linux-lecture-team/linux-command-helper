@@ -37,7 +37,7 @@ function clear_txt {
 }
 
 #######################################
-# 터머널의 텍스트를 초기화하는 스크립트
+# 터미널의 텍스트를 초기화하는 스크립트
 # Globals:
 #   None
 # Arguments:
@@ -51,7 +51,7 @@ function clear_terminal {
 }
 
 #######################################
-# 터머널 커서의 보이기/숨기기 설정을 수행합니다.
+# 터미널 커서의 보이기/숨기기 설정을 수행합니다.
 # Globals:
 #   None
 # Arguments:
@@ -217,6 +217,7 @@ function del_group_member {
 # main_menu.txt: 메인 메뉴 텍스트를 저장한 파일
 # user_menu.txt: 유저 관리 메뉴 텍스트를 저장한 파일
 # group_menu.txt: 그룹 관리 메뉴 텍스트를 저장한 파일
+# input.txt: 사용자 입력 공간을 마련하는 텍스트를 저장한 파일
 # 
 ########################################################
 
@@ -453,12 +454,12 @@ function input_enter_and_arrow_key() {
 
 ##################################################
 #
-#   커서 이동 관련 스크립트
+#   '>' 메뉴 커서 이동 관련 스크립트
 #
 # 동작 순서
-#1,이동 전 커서 위치 저장
-#2,이동 후 커서 위치 계산 후 저장
-#3, 1,2과정에서 얻은 위치 정보를 move_cursor에 전달
+#1,이동 전 터미널 커서 위치 저장
+#2,이동 후 터미널 커서 위치 계산 후 저장
+#3, 1,2과정에서 얻은 위치 정보를 move_arrow에 전달
 #
 ##################################################
 
@@ -506,12 +507,12 @@ function move_arrow {
 #
 #   관리 메뉴 실행 스크립트
 #
-# 1,커서 위치 정보는 각각의 메뉴 스크립트가 따로 관리한다.
-#메인 메뉴에서 관리 메뉴로 넘어갈때 넘어가기 직전의 커서 위치 정보를 저장한다.
-#관리 메뉴가 끝나면 저장했던 위치 정보를 불러와서 메인 메뉴의 커서를 배치한다.
+# 1,터미널 커서 위치 정보는 각각의 메뉴 스크립트가 따로 관리한다.
+#메인 메뉴에서 관리 메뉴로 넘어갈때 넘어가기 직전의 터미널 커서 위치 정보를 저장한다.
+#관리 메뉴가 끝나면 저장했던 위치 정보를 불러와서 메인 메뉴의 터미널 커서를 배치한다.
 #
-# 2,커서의 위치 정보는 이동 전 위치와 이동 후 위치를 두가지 상태 모두 기록한다.
-#커서의 위치정보를 먼저 갱신한뒤 > 기호를 움직이기 때문에 두가지 상태 모두 기록해야한다.
+# 2,터미널 커서의 위치 정보는 이동 전 위치와 이동 후 위치를 두가지 상태 모두 기록한다.
+#터미널 커서의 위치정보를 먼저 갱신한뒤 > 기호를 움직이기 때문에 두가지 상태 모두 기록해야한다.
 #
 ###################################################################################
 
@@ -529,6 +530,17 @@ function move_arrow {
 function user_menu_control {
     local row_begin=$1
     local user=$2
+    #터미널에 출력된 메뉴창에 맞춰서 사용자 정보를 출력하는 함수
+    function draw_user_info(){
+        move_cursor ` expr $row_begin + 1 ` 8
+        echo $user
+        move_cursor ` expr $row_begin + 2 ` 11
+        echo `get_user_comment $user`
+        move_cursor ` expr $row_begin + 3 ` 9
+        echo `get_user_shell $user`
+        move_cursor ` expr $row_begin + 4 ` 17
+        echo `get_user_primary_group $user`
+    }
     #메뉴 종료 변수(1되면 종료함)
     local menu_end=0
     #메뉴 텍스트 출력
@@ -537,15 +549,8 @@ function user_menu_control {
     cat user_menu.txt
     rm user_menu.txt
     #UserInfo 채우기
-    move_cursor ` expr $row_begin + 1 ` 8
-    echo $user
-    move_cursor ` expr $row_begin + 2 ` 11
-    echo `get_user_comment $user`
-    move_cursor ` expr $row_begin + 3 ` 9
-    echo `get_user_shell $user`
-    move_cursor ` expr $row_begin + 4 ` 17
-    echo `get_user_primary_group $user`
-    #커서 범위(행은 범위 내에서 움직이고 열은 두 위치만 가능함)
+    draw_user_info
+    #커서 범위(열은 범위 내에서 움직이고 행은 두 위치만 가능함)
     local Info_row_len=4
     local row_range_begin=`expr $row_begin + $Info_row_len + 3 `
     local row_range_end=`expr $row_range_begin + 1 `
@@ -557,7 +562,7 @@ function user_menu_control {
     #현재 커서 위치(열,행)
     local cur_col=1
     local cur_row=$row_range_begin
-    #초기 커서 셋팅
+    #초기 메뉴 커서 셋팅
     move_cursor $cur_row $cur_col
     put_arrow
     move_cursor $cur_row $cur_col
@@ -695,6 +700,27 @@ function user_menu_control {
 function group_menu_control {
     local row_begin=$1
     local group_gid=$2
+    #그룹 멤버 리스트를 메뉴창에 맞춰서 출력하는 함수
+    function draw_group_member {
+         local member_list=`grep -w $group_gid /etc/group | cut -d ":"  -f 4`
+        member_list+=","
+        move_cursor ` expr $row_begin + 1 ` 2
+        echo `echo $member_list | cut -d "," -f 1`
+        move_cursor ` expr $row_begin + 1 ` 29
+        echo `echo $member_list | cut -d "," -f 2`
+        move_cursor ` expr $row_begin + 2 ` 2
+        echo `echo $member_list | cut -d "," -f 3`
+        move_cursor ` expr $row_begin + 2 ` 29
+        echo `echo $member_list | cut -d "," -f 4`
+        move_cursor ` expr $row_begin + 3 ` 2
+        echo `echo $member_list | cut -d "," -f 5`
+        move_cursor ` expr $row_begin + 3 ` 29
+        echo `echo $member_list | cut -d "," -f 6`
+        move_cursor ` expr $row_begin + 4 ` 2
+        echo `echo $member_list | cut -d "," -f 7`
+        move_cursor ` expr $row_begin + 4 ` 29
+        echo `echo $member_list | cut -d "," -f 8`
+    }
     #메뉴 종료 변수(1되면 종료함)
     local menu_end=0
     #메뉴 텍스트 출력
@@ -703,25 +729,8 @@ function group_menu_control {
     cat group_menu.txt
     rm group_menu.txt
     #MemberList 채우기
-    local member_list=`grep -w $group_gid /etc/group | cut -d ":"  -f 4`
-    member_list+=","
-    move_cursor ` expr $row_begin + 1 ` 2
-    echo `echo $member_list | cut -d "," -f 1`
-    move_cursor ` expr $row_begin + 1 ` 29
-    echo `echo $member_list | cut -d "," -f 2`
-    move_cursor ` expr $row_begin + 2 ` 2
-    echo `echo $member_list | cut -d "," -f 3`
-    move_cursor ` expr $row_begin + 2 ` 29
-    echo `echo $member_list | cut -d "," -f 4`
-    move_cursor ` expr $row_begin + 3 ` 2
-    echo `echo $member_list | cut -d "," -f 5`
-    move_cursor ` expr $row_begin + 3 ` 29
-    echo `echo $member_list | cut -d "," -f 6`
-    move_cursor ` expr $row_begin + 4 ` 2
-    echo `echo $member_list | cut -d "," -f 7`
-    move_cursor ` expr $row_begin + 4 ` 29
-    echo `echo $member_list | cut -d "," -f 8`
-    #커서 범위(행은 범위 내에서 움직이고 열은 두 위치만 가능함)
+    draw_group_member
+    #커서 범위(열은 범위 내에서 움직이고 행은 두 위치만 가능함)
     local Info_row_len=4
     local row_range_begin=`expr $row_begin + $Info_row_len + 3 `
     local row_range_end=`expr $row_range_begin + 1 `
@@ -878,7 +887,7 @@ function main_menu_control {
     create_main_menu
     cat main_menu.txt
     rm main_menu.txt
-    #커서 범위(행은 범위 내에서 움직이고 열은 두 위치만 가능함)
+    #커서 범위(열은 범위 내에서 움직이고 행은 두 위치만 가능함)
     local row_range_begin=1
     local row_range_end=`wc -l user_DB.txt | cut -d ' ' -f1`
     local col_pos_left=1
