@@ -27,7 +27,7 @@ declare -i select_menu_list_size=4
 declare -i select_menu_line=14
 
 # 선택 메뉴의 터미널상 열 위치입니다.
-declare -i select_menu_col=2
+declare -i select_menu_col=3
 
 # 실행 여부 목록입니다.
 declare -a select_ok_list=(
