@@ -227,7 +227,7 @@ function input_enter_and_arrow_key() {
 #######################################
 # 터미널에 메인 타이틀을 표시합니다.
 # Globals:
-#   None
+#   linux_command_helper_main_title
 # Arguments:
 #   None
 # Outputs:
@@ -242,7 +242,11 @@ function draw_main_title() {
 #######################################
 # 터미널에 선택 메뉴를 표시합니다.
 # Globals:
-#   None
+#   select_menu_list_size
+#   select_menu_index
+#   select_menu_line
+#   select_menu_col
+#   select_menu_list
 # Arguments:
 #   None
 # Outputs:
@@ -268,7 +272,9 @@ function draw_select_menu() {
 #######################################
 # 선택 메뉴의 인덱스를 감소시킵니다.
 # Globals:
-#   None
+#   select_menu_index
+#   select_menu_min_index
+#   select_menu_max_index
 # Arguments:
 #   None
 # Outputs:
@@ -284,9 +290,11 @@ function up_select_menu_index() {
 
 
 #######################################
-# 선택 메뉴의 인덱스를 증가시킵니다.
+# 선택 메뉴를 아래로 이동 시킵니다.
 # Globals:
-#   None
+#   select_menu_index
+#   select_menu_min_index
+#   select_menu_max_index
 # Arguments:
 #   None
 # Outputs:
@@ -304,7 +312,13 @@ function down_select_menu_index() {
 #######################################
 # 터미널에 실행 여부를 표시합니다.
 # Globals:
-#   None
+#   is_select_ok
+#   select_ok_index
+#   select_ok_min_index
+#   select_ok_max_index
+#   select_ok_line
+#   select_ok_col
+#   select_ok_list
 # Arguments:
 #   None
 # Outputs:
@@ -343,9 +357,11 @@ function draw_ok() {
 
 
 #######################################
-# 실행 여부 인덱스를 감소시킵니다.
+# 실행 여부를 왼쪽으로 이동 시킵니다.
 # Globals:
-#   None
+#   select_ok_index
+#   select_ok_min_index
+#   select_ok_max_index
 # Arguments:
 #   None
 # Outputs:
@@ -361,9 +377,11 @@ function left_select_ok_index() {
 
 
 #######################################
-# 실행 여부 인덱스를 증가시킵니다.
+# 실행 여부를 오른쪽으로 이동 시킵니다.
 # Globals:
-#   None
+#   select_ok_index
+#   select_ok_min_index
+#   select_ok_max_index
 # Arguments:
 #   None
 # Outputs:
@@ -381,7 +399,9 @@ function right_select_ok_index() {
 #######################################
 # 스크립트 루프의 상태를 업데이트합니다.
 # Globals:
-#   None
+#   is_select_ok
+#   select_ok_index
+#   is_break_loop
 # Arguments:
 #   $1 키 값입니다.
 # Outputs:
@@ -426,10 +446,11 @@ function update_loop_state() {
     fi
 }
 
+
 #######################################
 # 사용자가 선택한 옵션을 실행합니다.
 # Globals:
-#   None
+#   select_menu_index
 # Arguments:
 #   None
 # Outputs:
