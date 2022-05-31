@@ -29,7 +29,7 @@ function draw_ls_helper_manual() {
 # Globals:
 #   None
 # Arguments:
-#   $1 텍스트 파일명
+#   None
 # Outputs:
 #   None
 #######################################
