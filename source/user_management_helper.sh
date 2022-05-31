@@ -35,25 +35,43 @@ function clear_txt {
 # Arguments:
 #   $1 사용자 이름
 # Outputs:
-#   각 함수의 이름 참조
+#   각 함수의 이름 참조 (=> 이거 수정 필요)
 #######################################
 function get_user_comment {
     echo `grep -a /bin/bash /etc/passwd | grep -w $1  | cut -d ":"  -f 5`
 }
 
-#기본 그룹 조회 (사용 인자: $1=사용자 이름)
+
+#######################################
+# 기본 그룹 조회
+# Globals:
+#   None
+# Arguments:
+#   $1 사용자 이름
+# Outputs:
+#   각 함수의 이름 참조 (=> 이거 수정 필요)
+#######################################
 function get_user_primary_group {
     echo `groups $1 | cut -d":" -f 2 | cut -d" " -f 2`
 }
 
-#사용 쉘 조회 (사용 인자: $1=사용자 이름 ,반환: 쉘 이름)
+
+#######################################
+# 사용 쉘 조회
+# Globals:
+#   None
+# Arguments:
+#   $1 사용자 이름
+# Outputs:
+#   쉘 이름 (=> 이거 수정 필요)
+#######################################
 function get_user_shell {
     echo `grep -a /bin/bash /etc/passwd | grep -w $1  | cut -d ":"  -f 7`
 }
 
 
 #######################################
-# 사용자 추가 또는 삭제 관련 스크립트
+# 사용자를 추가합니다.
 # Globals:
 #   None
 # Arguments:
@@ -67,13 +85,23 @@ function add_user {
     usermod -G 100 $1
 }
 
+
+#######################################
+# 사용자를 삭제합니다.
+# Globals:
+#   None
+# Arguments:
+#   $1 사용자 이름
+# Outputs:
+#   None
+#######################################
 function del_user {
     userdel -r $1
 }
 
 
 #######################################
-# 사용자 정보 변경 관련 스크립트
+# 사용자 정보 변경 관련 스크립트 (=> 이거 수정 필요)
 # Globals:
 #   None
 # Arguments:
@@ -86,13 +114,24 @@ function edit_user_comment {
     usermod -c $2 $1
 }
 
+
+#######################################
+# 사용자 정보 변경 관련 스크립트 (=> 이거 수정 필요)
+# Globals:
+#   None
+# Arguments:
+#   $1 사용자 이름
+#   $2 변경할 정보의 내용(코멘트, 그룹이름)
+# Outputs:
+#   None
+#######################################
 function edit_user_primary_group {
     usermod -g $2 $1
 }
 
 
 #######################################
-# 그룹 추가 또는 삭제 관련 스크립트
+# 그룹 추가합니다.
 # Globals:
 #   None
 # Arguments:
@@ -104,18 +143,28 @@ function add_group {
     groupadd $1
 }
 
+
+#######################################
+# 그룹을 삭제합니다.
+# Globals:
+#   None
+# Arguments:
+#   $1 그룹 이름
+# Outputs:
+#   None
+#######################################
 function del_group {
     groupdel $1
 }
 
 
 #######################################
-# 그룹 정보 변경 관련 스크립트
+# 그룹 정보를 추가합니다.
 # Globals:
 #   None
 # Arguments:
 #   $1 그룹 이름
-#   $2 (추가 또는 제거할)사용자 목록
+#   $2 추가할 사용자 목록
 # Outputs:
 #   None
 #######################################
@@ -130,6 +179,17 @@ function add_group_member {
     done
 }
 
+
+#######################################
+# 그룹 정보를 삭제합니다.
+# Globals:
+#   None
+# Arguments:
+#   $1 그룹 이름
+#   $2 삭제할 사용자 목록
+# Outputs:
+#   None
+#######################################
 function del_group_member {
     for param in "$@"
     do
@@ -336,7 +396,7 @@ function creat_input_menu {
 
 
 #######################################
-#  '>' 기호 입출력 관련 스크립트
+#  터미널에 '>' 화살표를 표시합니다.
 # Globals:
 #   None
 # Arguments:
@@ -348,13 +408,23 @@ function put_arrow {
     echo -n ">"
 }
 
+
+#######################################
+#  터미널에 '>' 화살표를 지웁니다.
+# Globals:
+#   None
+# Arguments:
+#   None
+# Outputs:
+#   None
+#######################################
 function del_arrow {
     echo -n " "
 }
 
 
 #######################################
-#  '>' 기호 입출력 관련 스크립트
+#  터미널에 '>' 화살표를 이동시킵니다.
 # Globals:
 #   None
 # Arguments:
