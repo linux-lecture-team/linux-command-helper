@@ -1,13 +1,5 @@
 #!/bin/bash
 
-######################################################################################################################################
-
-########################################################
-#
-# 스크립트 구현에 필요한 각종 보조 스크립트
-#
-########################################################
-
 #######################################
 # 텍스트 파일이 존재하지 않으면 생성시키는 스크립트
 # Globals:
@@ -17,10 +9,10 @@
 # Outputs:
 #   None
 #######################################
-
 function check_and_creat_txt {
     [ -s ~/$1 ] || touch $1
 }
+
 
 #######################################
 # 텍스트 파일의 내용을 전부 지우는 스크립트
@@ -31,66 +23,10 @@ function check_and_creat_txt {
 # Outputs:
 #   None
 #######################################
-
 function clear_txt {
     cat /dev/null > $1
 }
 
-#######################################
-# 터미널의 텍스트를 초기화하는 스크립트
-# Globals:
-#   None
-# Arguments:
-#   None
-# Outputs:
-#   None
-#######################################
-
-function clear_terminal {
-    echo -n `clear`
-}
-
-#######################################
-# 터미널 커서의 보이기/숨기기 설정을 수행합니다.
-# Globals:
-#   None
-# Arguments:
-#   $1 보이기/숨기기를 설정할 옵션입니다.
-# Outputs:
-#   None
-#######################################
-function visible_cursor {
-    option=$1
-
-    if [ ${option} == "on" ]; then
-        tput cnorm
-    elif [ ${option} == "off" ]; then
-        tput civis
-    fi
-}
-
-#######################################
-# 터미널의 커서를 옮기는 스크립트
-# Globals:
-#   None
-# Arguments:
-#   $1 cur_row
-#   $2 cur_col
-# Outputs:
-#   None
-#######################################
-
-function move_cursor {
-    tput cup $1 $2
-}
-
-######################################################################################################################################
-
-########################################################
-#
-# 유저 및 그룹 관리하는 함수를 구현한 스크립트
-#
-########################################################
 
 #######################################
 # 사용자 관련 정보 조회 관련 스크립트
@@ -101,20 +37,20 @@ function move_cursor {
 # Outputs:
 #   각 함수의 이름 참조
 #######################################
-
 function get_user_comment {
     echo `grep -a /bin/bash /etc/passwd | grep -w $1  | cut -d ":"  -f 5`
 }
 
-#기본 그룹 조회 (사용 인자: $1=사용자 이름) - 완성
+#기본 그룹 조회 (사용 인자: $1=사용자 이름)
 function get_user_primary_group {
     echo `groups $1 | cut -d":" -f 2 | cut -d" " -f 2`
 }
 
-#사용 쉘 조회 (사용 인자: $1=사용자 이름 ,반환: 쉘 이름) - 완성
+#사용 쉘 조회 (사용 인자: $1=사용자 이름 ,반환: 쉘 이름)
 function get_user_shell {
     echo `grep -a /bin/bash /etc/passwd | grep -w $1  | cut -d ":"  -f 7`
 }
+
 
 #######################################
 # 사용자 추가 또는 삭제 관련 스크립트
@@ -125,7 +61,6 @@ function get_user_shell {
 # Outputs:
 #   None
 #######################################
-
 function add_user {
     useradd -N -d /home/"$1" -s /bin/bash "$1"
     #기본 그룹(user:100) 설정
@@ -135,6 +70,7 @@ function add_user {
 function del_user {
     userdel -r $1
 }
+
 
 #######################################
 # 사용자 정보 변경 관련 스크립트
@@ -146,7 +82,6 @@ function del_user {
 # Outputs:
 #   None
 #######################################
-
 function edit_user_comment {
     usermod -c $2 $1
 }
@@ -154,6 +89,7 @@ function edit_user_comment {
 function edit_user_primary_group {
     usermod -g $2 $1
 }
+
 
 #######################################
 # 그룹 추가 또는 삭제 관련 스크립트
@@ -164,7 +100,6 @@ function edit_user_primary_group {
 # Outputs:
 #   None
 #######################################
-
 function add_group {
     groupadd $1
 }
@@ -172,6 +107,7 @@ function add_group {
 function del_group {
     groupdel $1
 }
+
 
 #######################################
 # 그룹 정보 변경 관련 스크립트
@@ -183,7 +119,6 @@ function del_group {
 # Outputs:
 #   None
 #######################################
-
 function add_group_member {
     for param in "$@"
     do
@@ -206,20 +141,6 @@ function del_group_member {
     done
 }
 
-######################################################################################################################################
-
-########################################################
-#
-#   스크립트 실행에 필요한 텍스트 파일을 만드는 스크립트
-#
-#   제작하는 텍스트 파일 목록
-# user_DB.txt: 유저-그룹 목록을 저장한 파일
-# main_menu.txt: 메인 메뉴 텍스트를 저장한 파일
-# user_menu.txt: 유저 관리 메뉴 텍스트를 저장한 파일
-# group_menu.txt: 그룹 관리 메뉴 텍스트를 저장한 파일
-# input.txt: 사용자 입력 공간을 마련하는 텍스트를 저장한 파일
-# 
-########################################################
 
 #######################################
 # /etc/passwd에서 필요한 정보만 추출하는 스크립트
@@ -233,7 +154,6 @@ function del_group_member {
 # Outputs:
 #   None
 #######################################
-
 function creat_user_var {
     # 유저 목록 변수 생성
     _User_list=`grep -a /bin/bash /etc/passwd | cut -d ":"  -f 1`
@@ -255,6 +175,7 @@ function creat_user_var {
     rm group.txt
 }
 
+
 #######################################
 #  creat_user_var에서 만든 리스트를 기반으로 user_DB.txt를 생성하는 스크립트
 # Globals:
@@ -267,7 +188,6 @@ function creat_user_var {
 # Outputs:
 #   user_DB.txt를 생성
 #######################################
-
 function create_user_DB {
     check_and_creat_txt user_DB.txt
     clear_txt user_DB.txt
@@ -285,6 +205,7 @@ function create_user_DB {
     done
 }
 
+
 #######################################
 #  user_DB.txt를 기반으로 메인 메뉴 텍스트 파일 생성하는 스크립트
 # Globals:
@@ -294,7 +215,6 @@ function create_user_DB {
 # Outputs:
 #   main_menu.txt를 생성
 #######################################
-
 function create_main_menu {
     check_and_creat_txt main_menu.txt
     clear_txt main_menu.txt
@@ -343,6 +263,7 @@ function create_main_menu {
     echo "└──────────────────────────┴──────────────────────────┘" >> main_menu.txt
 }
 
+
 #######################################
 #  사용자 관리 메뉴 틀 텍스트 파일 생성하는 스크립트
 # Globals:
@@ -352,7 +273,6 @@ function create_main_menu {
 # Outputs:
 #   user_menu.txt를 생성
 #######################################
-
 function create_user_menu {
     check_and_creat_txt user_menu.txt
     clear_txt user_menu.txt
@@ -370,6 +290,7 @@ function create_user_menu {
     echo "  Input:" >> user_menu.txt
 }
 
+
 #######################################
 #  그룹 관리 메뉴 틀 텍스트 파일 생성하는 스크립트
 # Globals:
@@ -379,7 +300,6 @@ function create_user_menu {
 # Outputs:
 #   group_menu.txt를 생성
 #######################################
-
 function create_group_menu {
     check_and_creat_txt group_menu.txt
     clear_txt group_menu.txt
@@ -397,6 +317,7 @@ function create_group_menu {
     echo "  Input:" >> group_menu.txt
 }
 
+
 #######################################
 #  입력 창 텍스트 파일을 생성하는 스크립트
 # Globals:
@@ -406,7 +327,6 @@ function create_group_menu {
 # Outputs:
 #   input_menu.txt를 생성
 #######################################
-
 function creat_input_menu {
     check_and_creat_txt Input.txt
     clear_txt Input.txt
@@ -414,54 +334,6 @@ function creat_input_menu {
     echo "  Input:                                                             " >> Input.txt
 }
 
-######################################################################################################################################
-
-##################################################
-#
-#   방향키 입력 스크립트
-#
-##################################################
-
-#######################################
-#  방향키와 엔터키를 입력받는 스크립트
-# Globals:
-#   None
-# Arguments:
-#   None
-# Outputs:
-#   입력받은 키의 문자열을 반환
-#######################################
-
-function input_enter_and_arrow_key() {
-    escape_char=$(printf "\u1b")
-    read -rsn1 key
-
-    if [[ $key == $escape_char ]]; then
-        read -rsn2 key
-    fi
-
-    case $key in
-        '[A') echo "up" ;;
-        '[B') echo "down" ;;
-        '[D') echo "left" ;;
-        '[C') echo "right" ;;
-        '') echo "enter" ;;
-        *) >&2 echo -n "" ;;
-    esac
-}
-
-######################################################################################################################################
-
-##################################################
-#
-#   '>' 메뉴 커서 이동 관련 스크립트
-#
-# 동작 순서
-#1,이동 전 터미널 커서 위치 저장
-#2,이동 후 터미널 커서 위치 계산 후 저장
-#3, 1,2과정에서 얻은 위치 정보를 move_arrow에 전달
-#
-##################################################
 
 #######################################
 #  '>' 기호 입출력 관련 스크립트
@@ -472,7 +344,6 @@ function input_enter_and_arrow_key() {
 # Outputs:
 #   None
 #######################################
-
 function put_arrow {
     echo -n ">"
 }
@@ -480,6 +351,7 @@ function put_arrow {
 function del_arrow {
     echo -n " "
 }
+
 
 #######################################
 #  '>' 기호 입출력 관련 스크립트
@@ -493,7 +365,6 @@ function del_arrow {
 # Outputs:
 #   None
 #######################################
-
 function move_arrow {
     move_cursor $1 $2
     del_arrow
@@ -501,20 +372,6 @@ function move_arrow {
     put_arrow
 }
 
-######################################################################################################################################
-
-###################################################################################
-#
-#   관리 메뉴 실행 스크립트
-#
-# 1,터미널 커서 위치 정보는 각각의 메뉴 스크립트가 따로 관리한다.
-#메인 메뉴에서 관리 메뉴로 넘어갈때 넘어가기 직전의 터미널 커서 위치 정보를 저장한다.
-#관리 메뉴가 끝나면 저장했던 위치 정보를 불러와서 메인 메뉴의 터미널 커서를 배치한다.
-#
-# 2,터미널 커서의 위치 정보는 이동 전 위치와 이동 후 위치를 두가지 상태 모두 기록한다.
-#터미널 커서의 위치정보를 먼저 갱신한뒤 > 기호를 움직이기 때문에 두가지 상태 모두 기록해야한다.
-#
-###################################################################################
 
 #######################################
 #  유저 메뉴 실행 스크립트
@@ -526,7 +383,6 @@ function move_arrow {
 # Outputs:
 #   None
 #######################################
-
 function user_menu_control {
     local row_begin=$1
     local user=$2
@@ -686,6 +542,7 @@ function user_menu_control {
     done
 }
 
+
 #######################################
 #  그룹 메뉴 실행 스크립트
 # Globals:
@@ -696,7 +553,6 @@ function user_menu_control {
 # Outputs:
 #   None
 #######################################
-
 function group_menu_control {
     local row_begin=$1
     local group_gid=$2
@@ -866,6 +722,7 @@ function group_menu_control {
     done
 }
 
+
 #######################################
 #  메인 메뉴 실행 스크립트
 # Globals:
@@ -875,7 +732,6 @@ function group_menu_control {
 # Outputs:
 #   None
 #######################################
-
 function main_menu_control {
     #user_DB.txt 갱신
     creat_user_var
