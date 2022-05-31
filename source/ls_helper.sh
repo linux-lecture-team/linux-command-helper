@@ -17,12 +17,10 @@ function ls_helper() {
     echo "ls 명령어의 옵션을 -를 제외하고 입력하세요..."
     read -p "> " ls_target_option
 
-    cd ${ls_target_path}
-
     if [ "${ls_target_option}" == "" ]; then
-        ls_execute_result=`ls`
+        ls_execute_result=`ls ${ls_target_path}`
     else
-        ls_execute_result=`ls -${ls_target_option}`
+        ls_execute_result=`ls -${ls_target_option} ${ls_target_path}`
     fi
     
     echo "${ls_execute_result}"
